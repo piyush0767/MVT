@@ -415,6 +415,7 @@ function mccAdminLogin() {
       });
 
       routeContainer.appendChild(routeBlock);
+      populateRouteDropdown();
     });
 
   } else {
@@ -450,4 +451,75 @@ function showAdminPanel(mccName, routes) {
 
     container.appendChild(routeDiv);
   });
+}
+function populateRouteDropdown() {
+  const dropdown = document.getElementById("routeSelectToEdit");
+  dropdown.innerHTML = '<option value="">Select Route</option>';
+  for (let route in routeData) {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    dropdown.appendChild(option);
+  }
+}
+
+function addRoute() {
+  const newRoute = document.getElementById("newRouteNumber").value.trim();
+  if (newRoute && !routeData[newRoute]) {
+    routeData[newRoute] = { societies: [] };
+    populateRouteDropdown();
+    alert(`Route ${newRoute} added.`);
+  } else {
+    alert("Invalid or duplicate route number.");
+  }
+}
+
+function loadSocietiesForEdit() {
+  const route = document.getElementById("routeSelectToEdit").value;
+  const area = document.getElementById("editSocietiesArea");
+  area.innerHTML = "";
+
+  if (!route) return;
+
+  routeData[route].societies.forEach((society, index) => {
+    const div = document.createElement("div");
+    div.style.marginBottom = "6px";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = society;
+    input.style.marginRight = "10px";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "💾";
+    saveBtn.onclick = () => {
+      routeData[route].societies[index] = input.value.trim();
+      alert("Society name updated.");
+    };
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑";
+    delBtn.onclick = () => {
+      routeData[route].societies.splice(index, 1);
+      loadSocietiesForEdit();
+    };
+
+    div.appendChild(input);
+    div.appendChild(saveBtn);
+    div.appendChild(delBtn);
+
+    area.appendChild(div);
+  });
+}
+
+function addSociety() {
+  const route = document.getElementById("routeSelectToEdit").value;
+  const societyName = document.getElementById("newSocietyName").value.trim();
+  if (route && societyName) {
+    routeData[route].societies.push(societyName);
+    document.getElementById("newSocietyName").value = "";
+    loadSocietiesForEdit();
+  } else {
+    alert("Select route and enter valid society name.");
+  }
 }
