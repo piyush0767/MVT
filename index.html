@@ -32,30 +32,58 @@
       background-color: #8bc34a;
       color: white;
     }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: gray;
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>MVT - Milk Vehicle Tracking</h1>
+    <h1 id="titleText">MVT - Milk Vehicle Tracking</h1>
     <p>Developed by Piyush Raygor</p>
   </div>
 
-  <div class="login-section">
-    <h2>Driver Login</h2>
-    <input type="text" id="routeNumber" placeholder="Enter Route No (e.g., 1801)">
-    <input type="password" id="password" placeholder="Password (e.g., Milk1801)">
-    <button onclick="driverLogin()">Login</button>
+  <!-- Language Toggle -->
+  <div style="text-align: right; margin-bottom: 10px;">
+    <label for="languageSelect">🌐</label>
+    <select id="languageSelect" onchange="toggleLanguage()">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी</option>
+    </select>
   </div>
 
+  <!-- Login Section -->
+  <div class="login-section">
+    <h2 id="loginTitle">Driver Login</h2>
+    <input type="text" id="routeNumber" placeholder="Enter Route No (e.g., 1801)">
+    <input type="password" id="password" placeholder="Password (e.g., Milk1801)">
+    
+    <!-- Shift Selector -->
+    <select id="shiftSelector">
+      <option value="Morning">Morning Shift</option>
+      <option value="Evening">Evening Shift</option>
+    </select>
+
+    <button onclick="driverLogin()" id="loginBtn">Login</button>
+  </div>
+
+  <!-- Admin Section -->
   <div class="admin-section hidden">
-    <h2>MCC Admin Panel - <span id="adminTitle"></span></h2>
+    <h2 id="adminTitle">MCC Admin Panel - <span id="adminRoute"></span></h2>
     <div id="routeData"></div>
   </div>
 
+  <!-- Driver Panel -->
   <div class="driver-section hidden">
-    <h2>Driver Panel - Route <span id="driverRoute"></span></h2>
+    <h2 id="driverPanelTitle">Driver Panel - Route <span id="driverRoute"></span></h2>
+    <p id="shiftDisplay">Shift: </p>
     <div id="societyList"></div>
   </div>
+
+  <footer>Developed by Piyush Raygor</footer>
 
   <script src="script.js"></script>
 </body>
