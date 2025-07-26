@@ -1,3 +1,13 @@
+const mccAdmins = {
+  "Khushipur": {
+    password: "admin123",
+    routes: ["1801", "1802", "1803"]
+  },
+  "Shivpur": {
+    password: "admin456",
+    routes: ["1805", "1808", "1809"]
+  }
+};
 const routeData = {
   "1801": {
     password: "Milk1801",
@@ -370,5 +380,39 @@ function driverLogin() {
 
   } else {
     alert("Invalid Route No or Password");
+  }
+}
+function mccAdminLogin() {
+  const mccName = document.getElementById("mccName").value.trim();
+  const mccPassword = document.getElementById("mccPassword").value;
+
+  const adminData = mccAdmins[mccName];
+
+  if (adminData && adminData.password === mccPassword) {
+    document.querySelector(".login-section").classList.add("hidden");
+    document.querySelector(".admin-section").classList.remove("hidden");
+
+    document.getElementById("adminRoute").textContent = mccName;
+
+    const routeContainer = document.getElementById("routeData");
+    routeContainer.innerHTML = "";
+
+    adminData.routes.forEach(route => {
+      const routeBlock = document.createElement("div");
+      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
+
+      const societies = routeData[route]?.societies || [];
+      societies.forEach(society => {
+        const societyDiv = document.createElement("div");
+        societyDiv.className = "society";
+        societyDiv.innerHTML = `<span>${society}</span>`;
+        routeBlock.appendChild(societyDiv);
+      });
+
+      routeContainer.appendChild(routeBlock);
+    });
+
+  } else {
+    alert("Invalid MCC Name or Password");
   }
 }
