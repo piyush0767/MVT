@@ -455,8 +455,14 @@ function addRoute() {
   const newRoute = document.getElementById("newRouteNumber").value.trim();
   if (newRoute && !routeData[newRoute]) {
     routeData[newRoute] = { societies: [] };
+
+    // Add to mccAdmins route list
+    if (mccAdmins[currentMccName]) {
+      mccAdmins[currentMccName].routes.push(newRoute);
+    }
+
     populateRouteDropdown();
-    renderAdminRoutes(currentMccName);
+    renderAdminRoutes(currentMccName);  // ✅ Refresh display
     alert(`Route ${newRoute} added.`);
   } else {
     alert("Invalid or duplicate route number.");
@@ -503,11 +509,12 @@ function loadSocietiesForEdit() {
 function addSociety() {
   const route = document.getElementById("routeSelectToEdit").value;
   const societyName = document.getElementById("newSocietyName").value.trim();
+
   if (route && societyName) {
     routeData[route].societies.push(societyName);
     document.getElementById("newSocietyName").value = "";
     loadSocietiesForEdit();
-    renderAdminRoutes(currentMccName);
+    renderAdminRoutes(currentMccName);  // ✅ Refresh display
   } else {
     alert("Select route and enter valid society name.");
   }
