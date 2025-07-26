@@ -60,7 +60,13 @@
     <h2 id="loginTitle">Driver Login</h2>
     <input type="text" id="routeNumber" placeholder="Enter Route No (e.g., 1801)">
     <input type="password" id="password" placeholder="Password (e.g., Milk1801)">
-    
+    <!-- MCC Admin Login Section -->
+<div class="login-section" id="adminLoginSection">
+  <h2>MCC Admin Login</h2>
+  <input type="text" id="mccName" placeholder="MCC Name (e.g., Khushipur)">
+  <input type="password" id="mccPassword" placeholder="Password (e.g., Khushi123)">
+  <button onclick="mccAdminLogin()">Login as Admin</button>
+</div>
     <!-- Shift Selector -->
     <select id="shiftSelector">
       <option value="Morning">Morning Shift</option>
