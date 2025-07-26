@@ -80,6 +80,25 @@
   <div class="admin-section hidden">
     <h2 id="adminTitle">MCC Admin Panel - <span id="adminRoute"></span></h2>
     <div id="routeData"></div>
+    <h3>Manage Routes and Societies</h3>
+
+<div style="margin-bottom: 20px;">
+  <input type="text" id="newRouteNumber" placeholder="New Route No">
+  <button onclick="addRoute()">Add Route</button>
+</div>
+
+<div>
+  <select id="routeSelectToEdit" onchange="loadSocietiesForEdit()">
+    <option value="">Select Route</option>
+  </select>
+</div>
+
+<div id="editSocietiesArea" style="margin-top: 10px;"></div>
+
+<div style="margin-top: 10px;">
+  <input type="text" id="newSocietyName" placeholder="New Society Name">
+  <button onclick="addSociety()">Add Society</button>
+</div>
   </div>
 
   <!-- Driver Panel -->
