@@ -7,8 +7,26 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>MVT: Milk Vehicle Tracking</h1>
-  <p>This is the web version.</p>
-  <script src="script.js"></script>
+  <div class="header">
+    <h1>MVT - Milk Vehicle Tracking</h1>
+    <p>Developed by Piyush Raygor</p>
+  </div>
+
+  <div class="login-section">
+    <h2>Driver Login</h2>
+    <input type="text" id="routeNumber" placeholder="Enter Route No (e.g., 1801)">
+    <input type="password" id="password" placeholder="Password (e.g., Milk1801)">
+    <button onclick="driverLogin()">Login</button>
+  </div>
+
+  <div class="admin-section hidden">
+    <h2>MCC Admin Panel - <span id="adminTitle"></span></h2>
+    <div id="routeData"></div>
+  </div>
+
+  <div class="driver-section hidden">
+    <h2>Driver Panel - Route <span id="driverRoute"></span></h2>
+    <div id="societyList"></div>
+  </div>
 </body>
 </html>
