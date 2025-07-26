@@ -13,6 +13,16 @@ const mccAdmins = {
     password: "admin456",
     routes: ["1805", "1808", "1809"]
   }
+  let routeData = {};
+
+let currentMccName = "";
+
+// 🟢 Load routeData from localStorage OR use default
+function loadRouteData() {
+  const stored = localStorage.getItem("routeData");
+  if (stored) {
+    routeData = JSON.parse(stored);
+  } else
 };
 const routeData = {
   "1801": {
@@ -491,6 +501,17 @@ const routeData = {
     ]
   }
 };
+saveRouteData();
+  }
+}
+
+// 🟢 Save routeData to localStorage
+function saveRouteData() {
+  localStorage.setItem("routeData", JSON.stringify(routeData));
+}
+
+// 🟢 Call this on page load
+loadRouteData();
 
 function driverLogin() {
   const route = document.getElementById("routeNumber").value.trim();
