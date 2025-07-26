@@ -15,8 +15,6 @@ const mccAdmins = {
   }
   let routeData = {};
 
-let currentMccName = "";
-
 // 🟢 Load routeData from localStorage OR use default
 function loadRouteData() {
   const stored = localStorage.getItem("routeData");
