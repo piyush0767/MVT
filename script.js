@@ -624,20 +624,22 @@ function populateRouteDropdown() {
 function addRoute() {
   const newRoute = document.getElementById("newRouteNumber").value.trim();
   if (newRoute && !routeData[newRoute]) {
-    routeData[newRoute] = { societies: [] };
+    routeData[newRoute] = { password: "", societies: [] }; // add password if needed
 
-    // Add to mccAdmins route list
+    // Add to MCC admin's routes list
     if (mccAdmins[currentMccName]) {
       mccAdmins[currentMccName].routes.push(newRoute);
     }
 
+    saveRouteData(); // Save changes
     populateRouteDropdown();
-    renderAdminRoutes(currentMccName);  // ✅ Refresh display
+    renderAdminRoutes(currentMccName);
     alert(`Route ${newRoute} added.`);
   } else {
     alert("Invalid or duplicate route number.");
   }
 }
+
 function loadSocietiesForEdit() {
   const route = document.getElementById("routeSelectToEdit").value;
   const area = document.getElementById("editSocietiesArea");
@@ -658,14 +660,18 @@ function loadSocietiesForEdit() {
     saveBtn.textContent = "💾";
     saveBtn.onclick = () => {
       routeData[route].societies[index] = input.value.trim();
+      saveRouteData();            // Save changes here!
       alert("Society name updated.");
+      renderAdminRoutes(currentMccName); // Refresh admin view
     };
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑";
     delBtn.onclick = () => {
       routeData[route].societies.splice(index, 1);
+      saveRouteData();            // Save changes here!
       loadSocietiesForEdit();
+      renderAdminRoutes(currentMccName); // Refresh admin view
     };
 
     div.appendChild(input);
@@ -683,18 +689,19 @@ function addSociety() {
   if (route && societyName) {
     routeData[route].societies.push(societyName);
     document.getElementById("newSocietyName").value = "";
+    saveRouteData();  // Save changes here!
     loadSocietiesForEdit();
-    renderAdminRoutes(currentMccName);  // ✅ Refresh display
+    renderAdminRoutes(currentMccName);
   } else {
     alert("Select route and enter valid society name.");
   }
 }
+
 function renderAdminRoutes(mccName) {
   const routeContainer = document.getElementById("routeData");
   routeContainer.innerHTML = "";
 
   const adminData = mccAdmins[mccName];
-
   if (!adminData) return;
 
   adminData.routes.forEach(route => {
