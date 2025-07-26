@@ -399,24 +399,8 @@ function mccAdminLogin() {
 
     document.getElementById("adminRoute").textContent = mccName;
 
-    const routeContainer = document.getElementById("routeData");
-    routeContainer.innerHTML = "";
-
-    adminData.routes.forEach(route => {
-      const routeBlock = document.createElement("div");
-      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
-
-      const societies = routeData[route]?.societies || [];
-      societies.forEach(society => {
-        const societyDiv = document.createElement("div");
-        societyDiv.className = "society";
-        societyDiv.innerHTML = `<span>${society}</span>`;
-        routeBlock.appendChild(societyDiv);
-      });
-
-      routeContainer.appendChild(routeBlock);
-      populateRouteDropdown();
-    });
+    renderAdminRoutes(mccName);  // ✅ This updates the route/society list
+    populateRouteDropdown();     // ✅ This updates the dropdown for editing
 
   } else {
     alert("Invalid MCC Name or Password");
@@ -522,4 +506,27 @@ function addSociety() {
   } else {
     alert("Select route and enter valid society name.");
   }
+}
+function renderAdminRoutes(mccName) {
+  const routeContainer = document.getElementById("routeData");
+  routeContainer.innerHTML = "";
+
+  const adminData = mccAdmins[mccName];
+
+  if (!adminData) return;
+
+  adminData.routes.forEach(route => {
+    const routeBlock = document.createElement("div");
+    routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
+
+    const societies = routeData[route]?.societies || [];
+    societies.forEach(society => {
+      const societyDiv = document.createElement("div");
+      societyDiv.className = "society";
+      societyDiv.innerHTML = `<span>${society}</span>`;
+      routeBlock.appendChild(societyDiv);
+    });
+
+    routeContainer.appendChild(routeBlock);
+  });
 }
