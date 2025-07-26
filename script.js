@@ -328,7 +328,7 @@ const routeData = {
 };
 
 function driverLogin() {
-  const route = document.getElementById("routeNumber").value;
+  const route = document.getElementById("routeNumber").value.trim();
   const password = document.getElementById("password").value;
 
   if (routeData[route] && routeData[route].password === password) {
@@ -348,11 +348,11 @@ function driverLogin() {
 
       const arrivalBtn = document.createElement("button");
       arrivalBtn.textContent = "✅";
-      arrivalBtn.onclick = () => arrivalBtn.classList.add("active");
+      arrivalBtn.onclick = () => arrivalBtn.classList.toggle("active");
 
       const dispatchBtn = document.createElement("button");
       dispatchBtn.textContent = "📤";
-      dispatchBtn.onclick = () => dispatchBtn.classList.add("active");
+      dispatchBtn.onclick = () => dispatchBtn.classList.toggle("active");
 
       div.appendChild(name);
       div.appendChild(arrivalBtn);
@@ -363,4 +363,4 @@ function driverLogin() {
   } else {
     alert("Invalid Route No or Password");
   }
-}
+      }
