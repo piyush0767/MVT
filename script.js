@@ -565,10 +565,13 @@ function mccAdminLogin() {
   const mccName = document.getElementById("mccName").value.trim();
   const mccPassword = document.getElementById("mccPassword").value;
 
+  console.log("Entered MCC:", mccName);
+  console.log("Entered Password:", mccPassword);
+  console.log("Stored Admin Data:", mccAdmins[mccName]);
+
   const adminData = mccAdmins[mccName];
 
   if (adminData && adminData.password === mccPassword) {
-    // ✅ Set the current logged-in MCC name
     currentMccName = mccName;
 
     document.querySelector(".login-section").classList.add("hidden");
@@ -576,9 +579,8 @@ function mccAdminLogin() {
 
     document.getElementById("adminRoute").textContent = mccName;
 
-    renderAdminRoutes(mccName);  // ✅ Render the data
-    populateRouteDropdown();     // ✅ Populate dropdown for editing
-
+    renderAdminRoutes(mccName);
+    populateRouteDropdown();
   } else {
     alert("Invalid MCC Name or Password");
   }
