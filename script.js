@@ -1,3 +1,26 @@
+console.log("✅ script.js loaded");
+// ✅ Only run this ONCE to initialize sample data
+if (!localStorage.getItem("initialized")) {
+  const routeData = {
+    "1801": {
+      password: "Milk1801",
+      societies: ["SOCIETY A", "SOCIETY B"]
+    }
+  };
+
+  const mccAdmins = {
+    "MCC1": {
+      password: "admin123",
+      routes: ["1801"]
+    }
+  };
+
+  localStorage.setItem("routeData", JSON.stringify(routeData));
+  localStorage.setItem("mccAdmins", JSON.stringify(mccAdmins));
+  localStorage.setItem("initialized", "yes");  // prevents re-running
+
+  alert("✅ Sample data loaded! Try logging in now.");
+}
 let currentMccName = "";
 const mccAdmins = {
   "Khushipur": {
