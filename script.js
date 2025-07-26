@@ -7,12 +7,13 @@ const mccAdmins = {
       "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
       "1820", "1821", "1822", "1823", "1824", "1825", "1826", "1827",
       "1828", "1830", "1831", "1834"
-      ]
+    ]
   },
   "Shivpur": {
     password: "admin456",
     routes: ["1805", "1808", "1809"]
   }
+};
   let routeData = {};
 
 let currentMccName = "";
@@ -22,8 +23,11 @@ function loadRouteData() {
   const stored = localStorage.getItem("routeData");
   if (stored) {
     routeData = JSON.parse(stored);
-  } else
-};
+  } else {
+    // Initialize with default routeData or empty object
+    routeData = defaultRouteData; // define defaultRouteData above with your initial data
+  }
+}
 const routeData = {
   "1801": {
     password: "Milk1801",
