@@ -64,3 +64,18 @@ button.active {
 .hidden {
   display: none;
 }
+.admin-panel {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fffbe6;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.route-card {
+  background: #f2f2f2;
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
