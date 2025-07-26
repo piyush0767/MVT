@@ -330,11 +330,14 @@ const routeData = {
 function driverLogin() {
   const route = document.getElementById("routeNumber").value.trim();
   const password = document.getElementById("password").value;
+  const shift = document.getElementById("shiftSelector").value;
 
   if (routeData[route] && routeData[route].password === password) {
     document.querySelector(".login-section").classList.add("hidden");
     document.querySelector(".driver-section").classList.remove("hidden");
+
     document.getElementById("driverRoute").textContent = route;
+    document.getElementById("shiftDisplay").textContent = `Shift: ${shift}`;
 
     const societyList = document.getElementById("societyList");
     societyList.innerHTML = "";
@@ -360,7 +363,12 @@ function driverLogin() {
 
       societyList.appendChild(div);
     });
+
+    // Optional for later: use in admin view
+    sessionStorage.setItem("driverRoute", route);
+    sessionStorage.setItem("driverShift", shift);
+
   } else {
     alert("Invalid Route No or Password");
   }
-      }
+}
