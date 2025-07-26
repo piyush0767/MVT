@@ -421,3 +421,33 @@ function mccAdminLogin() {
     alert("Invalid MCC Name or Password");
   }
 }
+function showAdminPanel(mccName, routes) {
+  document.querySelector(".login-section").classList.add("hidden");
+  document.querySelector(".admin-panel").classList.remove("hidden");
+
+  document.getElementById("adminMccName").textContent = mccName;
+  
+  const container = document.getElementById("adminRoutesContainer");
+  container.innerHTML = "";
+
+  routes.forEach(route => {
+    const routeDiv = document.createElement("div");
+    routeDiv.className = "route-card";
+    routeDiv.innerHTML = `<h3>Route: ${route}</h3>`;
+
+    const socList = routeData[route]?.societies || [];
+    if (socList.length === 0) {
+      routeDiv.innerHTML += "<p>No societies found.</p>";
+    } else {
+      const ul = document.createElement("ul");
+      socList.forEach(soc => {
+        const li = document.createElement("li");
+        li.textContent = soc;
+        ul.appendChild(li);
+      });
+      routeDiv.appendChild(ul);
+    }
+
+    container.appendChild(routeDiv);
+  });
+}
