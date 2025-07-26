@@ -13,7 +13,6 @@ const mccAdmins = {
     password: "admin456",
     routes: ["1805", "1808", "1809"]
   }
-};
   let routeData = {};
 
 let currentMccName = "";
