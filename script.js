@@ -1,3 +1,4 @@
+let currentMccName = "";
 const mccAdmins = {
   "Khushipur": {
     password: "admin123",
@@ -394,13 +395,16 @@ function mccAdminLogin() {
   const adminData = mccAdmins[mccName];
 
   if (adminData && adminData.password === mccPassword) {
+    // ✅ Set the current logged-in MCC name
+    currentMccName = mccName;
+
     document.querySelector(".login-section").classList.add("hidden");
     document.querySelector(".admin-section").classList.remove("hidden");
 
     document.getElementById("adminRoute").textContent = mccName;
 
-    renderAdminRoutes(mccName);  // ✅ This updates the route/society list
-    populateRouteDropdown();     // ✅ This updates the dropdown for editing
+    renderAdminRoutes(mccName);  // ✅ Render the data
+    populateRouteDropdown();     // ✅ Populate dropdown for editing
 
   } else {
     alert("Invalid MCC Name or Password");
@@ -452,12 +456,12 @@ function addRoute() {
   if (newRoute && !routeData[newRoute]) {
     routeData[newRoute] = { societies: [] };
     populateRouteDropdown();
+    renderAdminRoutes(currentMccName);
     alert(`Route ${newRoute} added.`);
   } else {
     alert("Invalid or duplicate route number.");
   }
 }
-
 function loadSocietiesForEdit() {
   const route = document.getElementById("routeSelectToEdit").value;
   const area = document.getElementById("editSocietiesArea");
@@ -503,6 +507,7 @@ function addSociety() {
     routeData[route].societies.push(societyName);
     document.getElementById("newSocietyName").value = "";
     loadSocietiesForEdit();
+    renderAdminRoutes(currentMccName);
   } else {
     alert("Select route and enter valid society name.");
   }
