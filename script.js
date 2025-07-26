@@ -1,7 +1,7 @@
 let currentMccName = "";
 const mccAdmins = {
   "Khushipur": {
-    password: "admin123",
+    password: "Khushi123",
     routes: [
       "1801", "1802", "1803", "1805", "1808", "1809", "1810", "1811",
       "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
