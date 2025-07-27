@@ -162,39 +162,26 @@ function bulkAddRoute() {
     return;
   }
 
-  // Load existing data
+  // Load existing route data
   let data = JSON.parse(localStorage.getItem("routeData")) || {};
 
+  // Add or overwrite the route
   data[routeNumber] = {
     password: `Milk${routeNumber}`,
     societies: societies
   };
 
+  // Save updated data
   localStorage.setItem("routeData", JSON.stringify(data));
-  showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
-
-  populateRouteSelector();
-
-  // Clear inputs
-  document.getElementById("bulkRouteNumber").value = "";
-  document.getElementById("bulkSocieties").value = "";
-}
-
-  // Load existing data
-  let data = JSON.parse(localStorage.getItem("routeData")) || {};
-
-  data[routeNumber] = {
-    password: `Milk${routeNumber}`,
-    societies: societies
-  };
-
-  localStorage.setItem("routeData", JSON.stringify(data));
-  showToast(`Route ${routeNumber} added with ${societies.length} societies.`, false);
 
   // Refresh dropdown
   populateRouteSelector();
+
+  // Clear input fields
   document.getElementById("bulkRouteNumber").value = "";
   document.getElementById("bulkSocieties").value = "";
+
+  showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
