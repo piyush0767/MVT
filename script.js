@@ -99,11 +99,16 @@ function loadSocietiesForEdit() {
   const editor = document.getElementById("societyEditor");
   editor.innerHTML = "";
 
+  if (!routeData[route] || !routeData[route].societies) return;
+
   routeData[route].societies.forEach((soc, index) => {
     const div = document.createElement("div");
     div.innerHTML = `${soc} <button onclick="deleteSociety(${index})">Delete</button>`;
     editor.appendChild(div);
   });
+
+  // ✅ Also show driver status table for this route
+  showAdminStatus(route);
 }
 
 function addSociety() {
@@ -213,6 +218,35 @@ function markStatus(route, shift, society, type, btn) {
   if (savedStatus[society].departure) statusSpan.innerText += "🔴 Departed";
 
   showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} marked for ${society}`);
+}
+function showAdminStatus(routeNumber) {
+  const data = JSON.parse(localStorage.getItem("routeData")) || {};
+  const status = JSON.parse(localStorage.getItem("arrivalDispatchStatus") || "{}");
+  const route = data[routeNumber];
+  const shift = "Morning"; // or allow shift selection later
+
+  if (!route) return;
+
+  let html = `<table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+                <tr>
+                  <th>Society</th>
+                  <th>Arrival</th>
+                  <th>Dispatch</th>
+                </tr>`;
+
+  route.societies.forEach(society => {
+    const societyKey = `${routeNumber}_${shift}_${society}`;
+    const stat = status[societyKey] || { arrival: false, dispatch: false };
+
+    html += `<tr>
+      <td>${society}</td>
+      <td style="text-align:center;">${stat.arrival ? "✅" : "❌"}</td>
+      <td style="text-align:center;">${stat.dispatch ? "✅" : "❌"}</td>
+    </tr>`;
+  });
+
+  html += `</table>`;
+  document.getElementById("adminStatusView").innerHTML = html;
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
