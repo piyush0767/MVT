@@ -347,3 +347,7 @@ window.onload = function () {
   populateFilterRoutes();
   // (add any other setup functions here)
 };
+window.onload = function () {
+  document.querySelector(".driver-section").classList.add("hidden");
+  document.querySelector(".admin-section").classList.add("hidden");
+};
