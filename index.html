@@ -74,6 +74,24 @@
 <input id="bulkRouteNumber" placeholder="Route Number"><br><br>
 <textarea id="bulkSocieties" rows="6" style="width:100%;" placeholder="Enter societies (one per line or comma-separated)"></textarea><br>
 <button onclick="bulkAddRoute()">➕ Add Route with Societies</button>
+    <h3>📊 Driver Visit Logs</h3>
+
+<label>📅 Date:</label>
+<input type="date" id="filterDate"><br><br>
+
+<label>🛣️ Route:</label>
+<select id="filterRoute">
+  <option value="">All Routes</option>
+</select><br><br>
+
+<label>⏰ Shift:</label>
+<select id="filterShift">
+  <option value="">All Shifts</option>
+  <option value="Morning">Morning</option>
+  <option value="Evening">Evening</option>
+</select><br><br>
+
+<button onclick="applyAdminFilters()">🔍 Apply Filters</button><br><br>
     <hr><br>
 <h3>Driver Status</h3>
 <div id="adminStatusTable"></div>
