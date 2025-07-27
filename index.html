@@ -1,299 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MVT Milk Collection Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Milk Van Tracking</title>
   <style>
-    :root {
-      --primary: #2c7be5;
-      --success: #00d97e;
-      --danger: #e63757;
-      --light-gray: #f5f7fa;
-      --dark-gray: #6e84a3;
-    }
-    
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f9fa;
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .hidden {
-      display: none !important;
-    }
-    
-    /* Login Section */
-    .login-section {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    
-    h2 {
-      color: var(--primary);
-      margin-top: 0;
-    }
-    
-    input, select {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 16px;
-      width: 100%;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    
-    button:hover {
-      background-color: #1a68d1;
-    }
-    
-    /* Society List */
-    .society-list {
-      margin-top: 20px;
-    }
-    
-    .society-item {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .society-info {
-      margin-bottom: 10px;
-    }
-    
-    .society-name {
-      font-weight: 600;
-      font-size: 16px;
-    }
-    
-    .time-display {
-      font-size: 14px;
-      color: var(--dark-gray);
-      margin-top: 5px;
-    }
-    
-    .time-display span {
-      display: block;
-      margin: 2px 0;
-    }
-    
-    .society-actions {
-      display: flex;
-      gap: 10px;
-    }
-    
-    .society-actions button {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px;
-    }
-    
-    .arrival-btn.active {
-      background-color: var(--success);
-    }
-    
-    .dispatch-btn.active {
-      background-color: var(--danger);
-    }
-    
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 24px;
-      border-radius: 6px;
-      color: white;
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    
-    .toast.show {
-      opacity: 1;
-    }
-    
-    .toast.error {
-      background-color: var(--danger);
-    }
-    
-    .toast.info {
-      background-color: var(--primary);
-    }
-    
-    /* Session Info */
-    .session-info {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    /* Admin Panel */
-    .route-block {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .route-block h3 {
-      margin-top: 0;
-      color: var(--primary);
-    }
-    
-    /* Language Toggle */
-    .language-toggle {
-      text-align: right;
-      margin-bottom: 15px;
-    }
-    
-    .language-toggle select {
-      width: auto;
-      padding: 8px 12px;
-      margin-left: 5px;
-    }
-    
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: var(--dark-gray);
-      font-size: 14px;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .hidden { display: none; }
+    .toast { position: fixed; top: 10px; right: 10px; background: #444; color: #fff; padding: 10px; border-radius: 5px; z-index: 9999; }
+    button { margin: 5px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1 id="titleText">MVT - Milk Vehicle Tracking</h1>
-      <p>Developed by Piyush Raygor</p>
-    </div>
+  <h2 id="title">Milk Van Tracking</h2>
 
-    <!-- Language Toggle -->
-    <div class="language-toggle">
-      <label for="languageSelect">🌐</label>
-      <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="hi">हिन्दी</option>
-      </select>
-    </div>
+  <!-- Language toggle -->
+  <button onclick="toggleLanguage()">🌐 Switch Language</button>
 
-    <!-- Login Sections -->
-    <div class="login-section" id="driverLoginSection">
-      <h2 id="loginTitle">Driver Login</h2>
-      <form id="driverLoginForm">
-        <input type="text" id="routeNumber" placeholder="Route Number (e.g., 1801)" inputmode="numeric" required>
-        <input type="password" id="password" placeholder="Password (e.g., Milk1801)" required>
-        <select id="shiftSelector" required>
-          <option value="">Select Shift</option>
-          <option value="Morning">Morning (6AM-2PM)</option>
-          <option value="Evening">Evening (2PM-10PM)</option>
-          <option value="Night">Night (10PM-6AM)</option>
-        </select>
-        <button type="submit" id="driverLoginBtn">Login</button>
-      </form>
-    </div>
-
-    <div class="login-section" id="adminLoginSection">
-      <h2>MCC Admin Login</h2>
-      <form id="adminLoginForm">
-        <input type="text" id="mccName" placeholder="MCC Name (e.g., Khushipur)" required>
-        <input type="password" id="mccPassword" placeholder="Password (e.g., Khushi123)" required>
-        <button type="submit" id="adminLoginBtn">Login as Admin</button>
-      </form>
-    </div>
-
-    <!-- Driver Dashboard -->
-    <div class="driver-section hidden">
-      <div class="session-info">
-        <h2>Route <span id="driverRoute"></span></h2>
-        <p id="shiftDisplay"></p>
-        <p id="loginTime"></p>
-      </div>
-      
-      <div id="societyList" class="society-list"></div>
-    </div>
-
-    <!-- Admin Dashboard -->
-    <div class="admin-section hidden">
-      <div class="session-info">
-        <h2>MCC Admin: <span id="adminRoute"></span></h2>
-      </div>
-      
-      <h3>Route Management</h3>
-      <div style="margin-bottom: 20px;">
-        <input type="text" id="newRouteNumber" placeholder="New Route Number" inputmode="numeric">
-        <button onclick="addRoute()" style="margin-top: 10px;">Add Route</button>
-      </div>
-      
-      <div>
-        <select id="routeSelectToEdit" onchange="loadSocietiesForEdit()">
-          <option value="">Select Route to Edit</option>
-        </select>
-      </div>
-      
-      <div id="editSocietiesArea" style="margin-top: 15px;"></div>
-      
-      <div style="margin-top: 15px;">
-        <input type="text" id="newSocietyName" placeholder="New Society Name">
-        <button onclick="addSociety()" style="margin-top: 10px;">Add Society</button>
-      </div>
-      
-      <div id="routeData" style="margin-top: 30px;"></div>
-    </div>
-
-    <footer>Developed by Piyush Raygor</footer>
+  <!-- Driver Login Section -->
+  <div id="driverLoginSection">
+    <h3 id="driverLoginTitle">Driver Login</h3>
+    <input id="routeNumber" placeholder="Enter Route Number" /><br/>
+    <input id="password" type="password" placeholder="Enter Password" /><br/>
+    <select id="shiftSelector">
+      <option value="Morning">Morning</option>
+      <option value="Evening">Evening</option>
+    </select><br/>
+    <button onclick="driverLogin()">Login</button>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
+  <!-- Driver Section -->
+  <div class="driver-section hidden">
+    <h3 id="driverHeader">Welcome Driver</h3>
+    <p><strong>Route:</strong> <span id="driverRoute"></span></p>
+    <p><strong id="shiftLabel">Shift:</strong> <span id="shiftDisplay"></span></p>
+    <p><strong>Login Time:</strong> <span id="loginTime"></span></p>
 
-  <script src="script.js" defer></script>
+    <ul id="societyList"></ul>
+  </div>
+
+  <!-- Toast Message Container -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    // Show toast
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 3000);
+    }
+
+    // Load route data if not in localStorage
+    function initRouteData() {
+      if (!localStorage.getItem("routeData")) {
+        const sampleData = {
+          "1801": {
+            password: "Milk1801",
+            societies: {
+              Morning: ["Shivaji Nagar", "Green Valley", "Sai Residency"],
+              Evening: ["Shivaji Nagar", "Green Valley", "Evening Heights"]
+            }
+          },
+          "1802": {
+            password: "Milk1802",
+            societies: {
+              Morning: ["Lakeview Apartments", "Sunrise Colony"],
+              Evening: ["Sunset Residency", "Twilight Homes"]
+            }
+          }
+        };
+        localStorage.setItem("routeData", JSON.stringify(sampleData));
+        alert("✅ Sample data loaded!\nTry route 1801 & password Milk1801");
+      }
+    }
+
+    // Load saved language
+    function loadLanguage() {
+      const lang = localStorage.getItem("lang") || "en";
+      applyLanguage(lang);
+    }
+
+    function toggleLanguage() {
+      const current = localStorage.getItem("lang") || "en";
+      const next = current === "en" ? "hi" : "en";
+      applyLanguage(next);
+      localStorage.setItem("lang", next);
+    }
+
+    function applyLanguage(lang) {
+      const texts = {
+        en: {
+          title: "Milk Van Tracking",
+          driverLoginTitle: "Driver Login",
+          driverHeader: "Welcome Driver",
+          shiftLabel: "Shift:"
+        },
+        hi: {
+          title: "दूध वाहन ट्रैकिंग",
+          driverLoginTitle: "ड्राइवर लॉगिन",
+          driverHeader: "स्वागत है ड्राइवर",
+          shiftLabel: "शिफ्ट:"
+        }
+      };
+      const t = texts[lang];
+      document.getElementById("title").innerText = t.title;
+      document.getElementById("driverLoginTitle").innerText = t.driverLoginTitle;
+      document.getElementById("driverHeader").innerText = t.driverHeader;
+      document.getElementById("shiftLabel").innerText = t.shiftLabel;
+    }
+
+    function driverLogin() {
+      const route = document.getElementById("routeNumber").value.trim();
+      const password = document.getElementById("password").value;
+      const shift = document.getElementById("shiftSelector").value;
+
+      const routeData = JSON.parse(localStorage.getItem("routeData"));
+
+      if (!routeData[route]) {
+        showToast("❌ Route not found");
+        return;
+      }
+
+      if (routeData[route].password !== password) {
+        showToast("❌ Incorrect password");
+        return;
+      }
+
+      // Show driver section
+      document.querySelector(".driver-section").classList.remove("hidden");
+      document.getElementById("driverRoute").innerText = route;
+      document.getElementById("shiftDisplay").innerText = shift;
+      document.getElementById("loginTime").innerText = new Date().toLocaleTimeString();
+      document.getElementById("driverLoginSection").classList.add("hidden");
+
+      showSocietyList(route, shift);
+    }
+
+    function showSocietyList(route, shift) {
+      const routeData = JSON.parse(localStorage.getItem("routeData"));
+      const societies = routeData[route].societies[shift] || [];
+      const ul = document.getElementById("societyList");
+      ul.innerHTML = "";
+
+      societies.forEach((name, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${name}
+          <button onclick="mark('${name}', 'arrival')">Arrival</button>
+          <button onclick="mark('${name}', 'dispatch')">Dispatch</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function mark(society, action) {
+      showToast(`✔️ ${society} marked as ${action}`);
+    }
+
+    // On load
+    document.addEventListener("DOMContentLoaded", () => {
+      initRouteData();
+      loadLanguage();
+    });
+  </script>
 </body>
 </html>
