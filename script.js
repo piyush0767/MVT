@@ -206,7 +206,6 @@ function bulkAddRoute() {
 
   showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
 }
-function markStatus(societyName, type) {
 function markStatus(route, shift, society, type, btn) {
   const date = new Date().toISOString().slice(0, 10); // today's date
   const time = new Date().toLocaleTimeString();
