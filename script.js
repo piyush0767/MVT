@@ -1,55 +1,37 @@
-console.log("✅ script.js loaded");
-// ✅ Only run this ONCE to initialize sample data
-if (!localStorage.getItem("initialized")) {
-  const routeData = {
-    "1801": {
-      password: "Milk1801",
-      societies: ["SOCIETY A", "SOCIETY B"]
+// ========== DATA INITIALIZATION ==========
+const MilkRouteTracker = {
+  // Initialize sample data if not exists
+  init: function() {
+    if (!localStorage.getItem("initialized")) {
+      localStorage.setItem("routeData", JSON.stringify(this.routeData));
+      localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
+      localStorage.setItem("initialized", "yes");
+      alert("✅ Sample data loaded! Try logging in now.");
+    } else {
+      // Load existing data
+      const storedRoutes = localStorage.getItem("routeData");
+      if (storedRoutes) this.routeData = JSON.parse(storedRoutes);
     }
-  };
-
-  const mccAdmins = {
-    "MCC1": {
-      password: "admin123",
-      routes: ["1801"]
-    }
-  };
-
-  localStorage.setItem("routeData", JSON.stringify(routeData));
-  localStorage.setItem("mccAdmins", JSON.stringify(mccAdmins));
-  localStorage.setItem("initialized", "yes");  // prevents re-running
-
-  alert("✅ Sample data loaded! Try logging in now.");
-}
-let currentMccName = "";
-const mccAdmins = {
-  "Khushipur": {
-    password: "Khushi123",
-    routes: [
-      "1801", "1802", "1803", "1805", "1808", "1809", "1810", "1811",
-      "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
-      "1820", "1821", "1822", "1823", "1824", "1825", "1826", "1827",
-      "1828", "1830", "1831", "1834"
-    ]
   },
-  "Shivpur": {
-    password: "admin456",
-    routes: ["1805", "1808", "1809"]
-  }
-  let routeData = {};
 
-// 🟢 Load routeData from localStorage OR use default
-function loadRouteData() {
-  const stored = localStorage.getItem("routeData");
-  if (stored) {
-    routeData = JSON.parse(stored);
-  } else {
-    // Initialize with default routeData or empty object
-    routeData = defaultRouteData; // define defaultRouteData above with your initial data
-  }
-}
-const routeData = {
-  "1801": {
+  // MCC Admin data
+  mccAdmins: {
+    "Khushipur": {
+      password: "Khushi123",
+      routes: ["1801", "1802", "1803", "1805", "1808", "1809", "1810", "1811",
+              "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
+              "1820", "1821", "1822", "1823", "1824", "1825", "1826", "1827",
+              "1828", "1830", "1831", "1834"]
+    },
+    "Shivpur": {
+      password: "admin456",
+      routes: ["1805", "1808", "1809"]
+    }
+  },
+
+  // Complete Route Data
+  routeData: {
+    "1801": {
     password: "Milk1801",
     societies: [
       "CHADIYA D.U. ASSOCIATION",
@@ -525,223 +507,238 @@ const routeData = {
     ]
   }
 };
-saveRouteData();
-  }
-}
+  // Current session data
+  currentSession: {
+    mccName: "",
+    driverRoute: "",
+    shift: ""
+  },
 
-// 🟢 Save routeData to localStorage
-function saveRouteData() {
-  localStorage.setItem("routeData", JSON.stringify(routeData));
-}
+  // ========== CORE FUNCTIONS ==========
+  saveData: function() {
+    localStorage.setItem("routeData", JSON.stringify(this.routeData));
+  },
 
-// 🟢 Call this on page load
-loadRouteData();
-
-function driverLogin() {
+// Enhanced Driver Login Function
+driverLogin: function() {
+  // Get input values
   const route = document.getElementById("routeNumber").value.trim();
   const password = document.getElementById("password").value;
   const shift = document.getElementById("shiftSelector").value;
 
-  if (routeData[route] && routeData[route].password === password) {
-    document.querySelector(".login-section").classList.add("hidden");
-    document.querySelector(".driver-section").classList.remove("hidden");
-
-    document.getElementById("driverRoute").textContent = route;
-    document.getElementById("shiftDisplay").textContent = `Shift: ${shift}`;
-
-    const societyList = document.getElementById("societyList");
-    societyList.innerHTML = "";
-
-    routeData[route].societies.forEach(society => {
-      const div = document.createElement("div");
-      div.className = "society";
-
-      const name = document.createElement("span");
-      name.textContent = society;
-
-      const arrivalBtn = document.createElement("button");
-      arrivalBtn.textContent = "✅";
-      arrivalBtn.onclick = () => arrivalBtn.classList.toggle("active");
-
-      const dispatchBtn = document.createElement("button");
-      dispatchBtn.textContent = "📤";
-      dispatchBtn.onclick = () => dispatchBtn.classList.toggle("active");
-
-      div.appendChild(name);
-      div.appendChild(arrivalBtn);
-      div.appendChild(dispatchBtn);
-
-      societyList.appendChild(div);
-    });
-
-    // Optional for later: use in admin view
-    sessionStorage.setItem("driverRoute", route);
-    sessionStorage.setItem("driverShift", shift);
-
-  } else {
-    alert("Invalid Route No or Password");
+  // Validate inputs
+  if (!route || !password || !shift) {
+    this.showToast("Please fill all fields", "error");
+    return;
   }
-}
-function mccAdminLogin() {
-  const mccName = document.getElementById("mccName").value.trim();
-  const mccPassword = document.getElementById("mccPassword").value;
 
-  console.log("Entered MCC:", mccName);
-  console.log("Entered Password:", mccPassword);
-  console.log("Stored Admin Data:", mccAdmins[mccName]);
-
-  const adminData = mccAdmins[mccName];
-
-  if (adminData && adminData.password === mccPassword) {
-    currentMccName = mccName;
-
-    document.querySelector(".login-section").classList.add("hidden");
-    document.querySelector(".admin-section").classList.remove("hidden");
-
-    document.getElementById("adminRoute").textContent = mccName;
-
-    renderAdminRoutes(mccName);
-    populateRouteDropdown();
-  } else {
-    alert("Invalid MCC Name or Password");
+  // Check credentials
+  if (!this.routeData[route] || this.routeData[route].password !== password) {
+    this.showToast("Invalid Route No or Password", "error");
+    return;
   }
-}
-function showAdminPanel(mccName, routes) {
+
+  // Start session
+  this.currentSession = {
+    driverRoute: route,
+    shift: shift,
+    loginTime: new Date().toISOString(),
+    societies: {}
+  };
+
+  // Update UI
+  this.showDriverDashboard(route, shift);
+  this.renderSocietyList(route);
+},
+
+// Show driver dashboard
+showDriverDashboard: function(route, shift) {
   document.querySelector(".login-section").classList.add("hidden");
-  document.querySelector(".admin-panel").classList.remove("hidden");
-
-  document.getElementById("adminMccName").textContent = mccName;
+  document.querySelector(".driver-section").classList.remove("hidden");
   
-  const container = document.getElementById("adminRoutesContainer");
-  container.innerHTML = "";
+  document.getElementById("driverRoute").textContent = route;
+  document.getElementById("shiftDisplay").textContent = `Shift: ${shift}`;
+  document.getElementById("loginTime").textContent = `Login: ${new Date().toLocaleTimeString()}`;
+},
 
-  routes.forEach(route => {
-    const routeDiv = document.createElement("div");
-    routeDiv.className = "route-card";
-    routeDiv.innerHTML = `<h3>Route: ${route}</h3>`;
+// Render society list with tracking
+renderSocietyList: function(route) {
+  const societyList = document.getElementById("societyList");
+  societyList.innerHTML = "";
 
-    const socList = routeData[route]?.societies || [];
-    if (socList.length === 0) {
-      routeDiv.innerHTML += "<p>No societies found.</p>";
+  this.routeData[route].societies.forEach((society, index) => {
+    const societyItem = document.createElement("div");
+    societyItem.className = "society-item";
+    societyItem.innerHTML = `
+      <div class="society-info">
+        <span class="society-name">${index + 1}. ${society}</span>
+        <div class="time-display">
+          <span class="arrival-time hidden">Arrived: --:--</span>
+          <span class="dispatch-time hidden">Dispatched: --:--</span>
+        </div>
+      </div>
+      <div class="society-actions">
+        <button class="arrival-btn" data-id="${index}">
+          <span class="icon">✅</span>
+          <span class="text">Arrived</span>
+        </button>
+        <button class="dispatch-btn" data-id="${index}">
+          <span class="icon">📤</span>
+          <span class="text">Dispatch</span>
+        </button>
+      </div>
+    `;
+    societyList.appendChild(societyItem);
+  });
+
+  // Add event listeners
+  this.setupSocietyButtons();
+},
+
+// Setup button handlers with touch support
+setupSocietyButtons: function() {
+  // Handle both click and touch events
+  const handleAction = (e, actionType) => {
+    const button = e.currentTarget;
+    const societyIndex = button.getAttribute("data-id");
+    const time = new Date().toLocaleTimeString();
+    
+    // Update UI
+    button.classList.add("active");
+    const timeDisplay = button.closest(".society-item").querySelector(`.${actionType}-time`);
+    timeDisplay.textContent = `${actionType === "arrival" ? "Arrived" : "Dispatched"}: ${time}`;
+    timeDisplay.classList.remove("hidden");
+    
+    // Store in session
+    if (!this.currentSession.societies[societyIndex]) {
+      this.currentSession.societies[societyIndex] = {};
+    }
+    this.currentSession.societies[societyIndex][actionType] = time;
+  };
+
+  // Arrival buttons
+  document.querySelectorAll(".arrival-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => handleAction(e, "arrival"));
+    btn.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      handleAction(e, "arrival");
+    });
+  });
+
+  // Dispatch buttons
+  document.querySelectorAll(".dispatch-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => handleAction(e, "dispatch"));
+    btn.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      handleAction(e, "dispatch");
+    });
+  });
+},
+
+// Show toast notification (better than alert)
+showToast: function(message, type = "info") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add("fade-out");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+  // MCC Admin login function
+  mccAdminLogin: function() {
+    const mccName = document.getElementById("mccName").value.trim();
+    const mccPassword = document.getElementById("mccPassword").value;
+
+    if (this.mccAdmins[mccName] && this.mccAdmins[mccName].password === mccPassword) {
+      this.currentSession.mccName = mccName;
+      
+      // Update UI
+      document.querySelector(".login-section").classList.add("hidden");
+      document.querySelector(".admin-section").classList.remove("hidden");
+      document.getElementById("adminRoute").textContent = mccName;
+
+      this.renderAdminRoutes(mccName);
+      this.populateRouteDropdown();
     } else {
-      const ul = document.createElement("ul");
-      socList.forEach(soc => {
-        const li = document.createElement("li");
-        li.textContent = soc;
-        ul.appendChild(li);
-      });
-      routeDiv.appendChild(ul);
+      alert("Invalid MCC Name or Password");
     }
+  },
 
-    container.appendChild(routeDiv);
-  });
-}
-function populateRouteDropdown() {
-  const dropdown = document.getElementById("routeSelectToEdit");
-  dropdown.innerHTML = '<option value="">Select Route</option>';
-  for (let route in routeData) {
-    const option = document.createElement("option");
-    option.value = route;
-    option.textContent = route;
-    dropdown.appendChild(option);
-  }
-}
+  // ========== ADMIN FUNCTIONS ==========
+  renderAdminRoutes: function(mccName) {
+    const routeContainer = document.getElementById("routeData");
+    routeContainer.innerHTML = "";
 
-function addRoute() {
-  const newRoute = document.getElementById("newRouteNumber").value.trim();
-  if (newRoute && !routeData[newRoute]) {
-    routeData[newRoute] = { password: "", societies: [] }; // add password if needed
+    const adminRoutes = this.mccAdmins[mccName]?.routes || [];
+    
+    adminRoutes.forEach(route => {
+      const routeBlock = document.createElement("div");
+      routeBlock.className = "route-block";
+      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
 
-    // Add to MCC admin's routes list
-    if (mccAdmins[currentMccName]) {
-      mccAdmins[currentMccName].routes.push(newRoute);
+      const societies = this.routeData[route]?.societies || [];
+      if (societies.length === 0) {
+        routeBlock.innerHTML += "<p>No societies found.</p>";
+      } else {
+        const list = document.createElement("ul");
+        societies.forEach(society => {
+          const item = document.createElement("li");
+          item.textContent = society;
+          list.appendChild(item);
+        });
+        routeBlock.appendChild(list);
+      }
+
+      routeContainer.appendChild(routeBlock);
+    });
+  },
+
+  populateRouteDropdown: function() {
+    const dropdown = document.getElementById("routeSelectToEdit");
+    dropdown.innerHTML = '<option value="">Select Route</option>';
+    
+    for (const route in this.routeData) {
+      const option = document.createElement("option");
+      option.value = route;
+      option.textContent = route;
+      dropdown.appendChild(option);
     }
+  },
 
-    saveRouteData(); // Save changes
-    populateRouteDropdown();
-    renderAdminRoutes(currentMccName);
-    alert(`Route ${newRoute} added.`);
-  } else {
-    alert("Invalid or duplicate route number.");
-  }
-}
-
-function loadSocietiesForEdit() {
-  const route = document.getElementById("routeSelectToEdit").value;
-  const area = document.getElementById("editSocietiesArea");
-  area.innerHTML = "";
-
-  if (!route) return;
-
-  routeData[route].societies.forEach((society, index) => {
-    const div = document.createElement("div");
-    div.style.marginBottom = "6px";
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = society;
-    input.style.marginRight = "10px";
-
-    const saveBtn = document.createElement("button");
-    saveBtn.textContent = "💾";
-    saveBtn.onclick = () => {
-      routeData[route].societies[index] = input.value.trim();
-      saveRouteData();            // Save changes here!
-      alert("Society name updated.");
-      renderAdminRoutes(currentMccName); // Refresh admin view
-    };
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑";
-    delBtn.onclick = () => {
-      routeData[route].societies.splice(index, 1);
-      saveRouteData();            // Save changes here!
-      loadSocietiesForEdit();
-      renderAdminRoutes(currentMccName); // Refresh admin view
-    };
-
-    div.appendChild(input);
-    div.appendChild(saveBtn);
-    div.appendChild(delBtn);
-
-    area.appendChild(div);
-  });
-}
-
-function addSociety() {
-  const route = document.getElementById("routeSelectToEdit").value;
-  const societyName = document.getElementById("newSocietyName").value.trim();
-
-  if (route && societyName) {
-    routeData[route].societies.push(societyName);
-    document.getElementById("newSocietyName").value = "";
-    saveRouteData();  // Save changes here!
-    loadSocietiesForEdit();
-    renderAdminRoutes(currentMccName);
-  } else {
-    alert("Select route and enter valid society name.");
-  }
-}
-
-function renderAdminRoutes(mccName) {
-  const routeContainer = document.getElementById("routeData");
-  routeContainer.innerHTML = "";
-
-  const adminData = mccAdmins[mccName];
-  if (!adminData) return;
-
-  adminData.routes.forEach(route => {
-    const routeBlock = document.createElement("div");
-    routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
-
-    const societies = routeData[route]?.societies || [];
-    societies.forEach(society => {
-      const societyDiv = document.createElement("div");
-      societyDiv.className = "society";
-      societyDiv.innerHTML = `<span>${society}</span>`;
-      routeBlock.appendChild(societyDiv);
+  // ========== INITIALIZATION ==========
+  setupEventListeners: function() {
+    // Mobile-friendly touch events
+    document.getElementById("driverLoginBtn").addEventListener("touchend", (e) => {
+      e.preventDefault();
+      this.driverLogin();
     });
 
-    routeContainer.appendChild(routeBlock);
-  });
-}
+    document.getElementById("adminLoginBtn").addEventListener("touchend", (e) => {
+      e.preventDefault();
+      this.mccAdminLogin();
+    });
+
+    // Click events for desktop
+    document.getElementById("driverLoginBtn").addEventListener("click", () => {
+      this.driverLogin();
+    });
+
+    document.getElementById("adminLoginBtn").addEventListener("click", () => {
+      this.mccAdminLogin();
+    });
+
+    // Form submission prevention
+    document.querySelectorAll("form").forEach(form => {
+      form.addEventListener("submit", (e) => e.preventDefault());
+    });
+  }
+};
+
+// Initialize the application when DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+  MilkRouteTracker.init();
+  MilkRouteTracker.setupEventListeners();
+});
