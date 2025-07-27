@@ -7,38 +7,72 @@
   <style>
     body { font-family: sans-serif; padding: 20px; }
     .hidden { display: none; }
-    .toast { position: fixed; top: 10px; right: 10px; background: #444; color: #fff; padding: 10px; border-radius: 5px; z-index: 9999; }
-    button { margin: 5px; }
+    .toast {
+      position: fixed; top: 10px; right: 10px;
+      background: #444; color: #fff; padding: 10px;
+      border-radius: 5px; z-index: 9999;
+    }
   </style>
 </head>
-<body style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto;">
-  <h1 style="text-align: center; font-size: 2em;">🥛 Milk Van Tracking</h1>
+<body>
+  <h1 style="text-align: center;">🥛 Milk Van Tracking</h1>
 
-  <div style="text-align: center; margin-bottom: 20px;">
-    <button id="languageSelect" style="padding: 8px 16px; font-size: 1em; cursor: pointer;">
-      🌐 Switch Language
-    </button>
+  <div style="text-align: center;">
+    <button id="languageSelect" onclick="toggleLanguage()">🌐 Switch Language</button>
   </div>
 
-  <div id="loginSection" style="border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+  <!-- 🔹 Driver Login Section -->
+  <div id="driverLoginSection">
     <h2 id="loginTitle">Driver Login</h2>
+    <label id="labelRoute">Route Number</label><br>
+    <input type="text" id="routeNumber" placeholder="Enter Route Number" /><br><br>
 
-    <input type="text" id="routeNumber" placeholder="Enter Route Number" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
-    <input type="password" id="password" placeholder="Enter Password" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
-    
-    <select id="shiftSelector" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+    <label id="labelPassword">Password</label><br>
+    <input type="password" id="password" placeholder="Enter Password" /><br><br>
+
+    <label id="shiftLabel">Select Shift</label><br>
+    <select id="shiftSelector">
       <option value="Morning">Morning</option>
       <option value="Evening">Evening</option>
       <option value="Night">Night</option>
-    </select>
+    </select><br><br>
 
-    <button id="driverLoginBtn" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; font-size: 1em;">
-      Login
-    </button>
+    <button id="driverLoginButton" onclick="driverLogin()">Login</button>
   </div>
 
-  <div id="driverPanel" style="display:none; margin-top: 30px;"></div>
-  <div id="adminPanel" style="display:none; margin-top: 30px;"></div>
+  <!-- 🔹 Driver Panel -->
+  <div class="driver-section hidden">
+    <h2>Driver Panel</h2>
+    <p><strong>Route:</strong> <span id="driverRoute"></span></p>
+    <p><span id="shiftDisplay"></span></p>
+    <p><span id="loginTime"></span></p>
+    <div id="societyList"></div>
+  </div>
 
+  <!-- 🔹 Admin Login Section -->
+  <div id="adminLoginSection" style="margin-top: 30px;">
+    <h2 id="adminLoginTitle">Admin Login</h2>
+    <input type="text" id="adminUsername" placeholder="Username" /><br><br>
+    <input type="password" id="adminPassword" placeholder="Password" /><br><br>
+    <button onclick="adminLogin()">Login as Admin</button>
+  </div>
+
+  <!-- 🔹 Admin Panel -->
+  <div class="admin-section hidden">
+    <h2>Admin Panel</h2>
+    <select id="routeSelector" onchange="loadSocietiesForEdit()"></select><br><br>
+
+    <div id="societyEditor"></div><br>
+    <input type="text" id="newSocietyName" placeholder="New Society Name" />
+    <button onclick="addSociety()">Add Society</button><br><br>
+
+    <input type="text" id="newRouteNumber" placeholder="New Route Number" />
+    <button onclick="addRoute()">Add Route</button>
+  </div>
+
+  <div id="toast" class="toast" style="display: none;"></div>
+
+  <!-- ✅ Link JavaScript -->
   <script src="script.js" defer></script>
 </body>
+</html>
