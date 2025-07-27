@@ -46,54 +46,55 @@
   </div>
 
   <!-- 🛠️ Admin Panel (Initially Hidden) -->
-  <div class="admin-section hidden">
-    <h2>Admin Panel</h2>
+<div class="admin-section hidden">
+  <div class="card">
+    <h2>🧭 Select Route</h2>
+    <select id="routeSelector" onchange="loadSocietiesForEdit()"></select>
+    <div id="societyEditor" class="society-list"></div>
+  </div>
 
-    <!-- 🚏 Route & Society Management -->
-    <label>Select Route:</label><br>
-    <select id="routeSelector" onchange="loadSocietiesForEdit()"></select><br><br>
+  <div class="card">
+    <h3>➕ Add New Society</h3>
+    <input type="text" id="newSocietyName" placeholder="New Society Name" />
+    <button onclick="addSociety()">Add Society</button>
+  </div>
 
-    <div id="societyEditor"></div><br>
+  <div class="card">
+    <h3>🚐 Add New Route</h3>
+    <input type="text" id="newRouteNumber" placeholder="New Route Number" />
+    <button onclick="addRoute()">Add Route</button>
+  </div>
 
-    <input id="newSocietyName" placeholder="New Society Name">
-    <button onclick="addSociety()">Add Society</button><br><br>
+  <div class="card">
+    <h3>🎂 Bulk Add Route with Societies</h3>
+    <input type="text" id="bulkRouteNumber" placeholder="Route Number" />
+    <textarea id="bulkSocietyNames" placeholder="Enter societies (one per line or comma-separated)"></textarea>
+    <button onclick="bulkAddRoute()">➕ Add Route with Societies</button>
+  </div>
 
-    <input id="newRouteNumber" placeholder="New Route Number">
-    <button onclick="addRoute()">Add Route</button><br><br>
+  <div class="card">
+    <h3>📋 Driver Visit Logs</h3>
+    <label>Date:</label>
+    <input type="date" id="adminDate" />
 
-    <hr><br>
+    <label>Route:</label>
+    <select id="adminRouteFilter"></select>
 
-    <!-- 📥 Bulk Add Routes -->
-    <h3>📥 Bulk Add Route with Societies</h3>
-    <input id="bulkRouteNumber" placeholder="Route Number"><br><br>
-    <textarea id="bulkSocieties" rows="6" style="width:100%;" placeholder="Enter societies (one per line or comma-separated)"></textarea><br>
-    <button onclick="bulkAddRoute()">➕ Add Route with Societies</button><br><br>
-
-    <hr><br>
-
-    <!-- 📊 Filter Visit Logs -->
-    <h3>📊 Driver Visit Logs</h3>
-
-    <label>📅 Date:</label>
-    <input type="date" id="filterDate"><br><br>
-
-    <label>🛣️ Route:</label>
-    <select id="filterRoute">
-      <option value="">All Routes</option>
-    </select><br><br>
-
-    <label>⏰ Shift:</label>
-    <select id="filterShift">
+    <label>Shift:</label>
+    <select id="adminShiftFilter">
       <option value="">All Shifts</option>
       <option value="Morning">Morning</option>
       <option value="Evening">Evening</option>
-    </select><br><br>
+    </select>
 
-    <button onclick="applyAdminFilters()">🔍 Apply Filters</button><br><br>
-
-    <h3>Driver Status</h3>
-    <div id="adminStatusTable"></div>
+    <button onclick="filterDriverLogs()">🧾 Apply Filters</button>
+    <div id="adminStatusTable" class="driver-status"></div>
   </div>
+
+  <div class="card danger">
+    <button onclick="resetApp()">🧨 Reset App</button>
+  </div>
+</div>
 
   <!-- 🔔 Toast Notification -->
   <div id="toast" class="toast"></div>
