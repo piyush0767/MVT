@@ -76,13 +76,11 @@ function adminLogin() {
     document.querySelector("#adminLoginSection").classList.add("hidden");
     document.querySelector(".admin-section").classList.remove("hidden");
 
-    showAdminTab('routes'); // ✅ Open default tab
+    showAdminTab('routes'); // Show "Routes" tab first
 
-    // 🟢 Add all route dropdown populators:
-    populateRouteSelector();              // Optional (used somewhere?)
-    populateSummaryRouteFilter();         // ✅ Summary filters
-    populateSummaryRouteDropdown();       // ✅ Summary dropdown
-    populateAdminRouteDropdown();         // ✅ Logs dropdown
+    // ✅ Only these 2 are needed
+    populateSummaryRouteDropdown();  // For Summary tab filter
+    populateAdminRouteDropdown();    // For Logs tab filter
   } else {
     showToast("Invalid admin credentials", true);
   }
@@ -594,6 +592,33 @@ function renderRouteManagementUI() {
   const editorDiv = document.createElement("div");
   editorDiv.id = "societyEditor";
   container.appendChild(editorDiv);
+}
+// 🟢 Fill route dropdown in Logs tab
+function populateRouteSelector() {
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  const dropdown = document.getElementById("logRouteFilter");
+  dropdown.innerHTML = "<option value=''>-- Select Route --</option>";
+
+  Object.keys(routeData).forEach(route => {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    dropdown.appendChild(option);
+  });
+}
+
+// 🟢 Fill route dropdown in Summary tab
+function populateSummaryRouteFilter() {
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  const dropdown = document.getElementById("summaryRouteFilter");
+  dropdown.innerHTML = "<option value=''>-- Select Route --</option>";
+
+  Object.keys(routeData).forEach(route => {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    dropdown.appendChild(option);
+  });
 }
 function showSocietyEditor(route) {
   const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
