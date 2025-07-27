@@ -50,12 +50,16 @@
   </div>
 
   <!-- 🔹 Admin Login Section -->
-  <div id="adminLoginSection" style="margin-top: 30px;">
-    <h2 id="adminLoginTitle">Admin Login</h2>
-    <input type="text" id="adminUsername" placeholder="Username" /><br><br>
-    <input type="password" id="adminPassword" placeholder="Password" /><br><br>
-    <button onclick="adminLogin()">Login as Admin</button>
-  </div>
+  <div id="adminLoginSection" style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 20px;">
+  <h2 id="adminLoginTitle">Admin Login</h2>
+
+  <input type="text" id="adminUsername" placeholder="Enter Admin Username" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+  <input type="password" id="adminPassword" placeholder="Enter Password" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+
+  <button onclick="adminLogin()" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; font-size: 1em;">
+    Login as Admin
+  </button>
+</div>
 
   <!-- 🔹 Admin Panel -->
   <div class="admin-section hidden">
