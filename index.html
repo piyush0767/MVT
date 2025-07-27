@@ -36,7 +36,7 @@
     <button onclick="adminLogin()">Login as Admin</button>
   </div>
 
-  <!-- ✅ Driver Section After Login -->
+  <!-- ✅ Driver Section (Initially Hidden) -->
   <div class="driver-section hidden">
     <h3>Welcome, Driver!</h3>
     <p id="driverRoute"></p>
@@ -45,50 +45,63 @@
     <div id="societyList"></div>
   </div>
 
-  <!-- 🛠️ Admin Panel -->
+  <!-- 🛠️ Admin Panel (Initially Hidden) -->
   <div class="admin-section hidden">
     <h2>Admin Panel</h2>
+
+    <!-- 🚏 Route & Society Management -->
     <label>Select Route:</label><br>
     <select id="routeSelector" onchange="loadSocietiesForEdit()"></select><br><br>
-<hr><br>
-<h3>📥 Bulk Add Route with Societies</h3>
-<input id="bulkRouteNumber" placeholder="Route Number"><br><br>
-<textarea id="bulkSocieties" rows="6" style="width:100%;" placeholder="Enter societies (one per line or comma-separated)"></textarea><br>
-<button onclick="bulkAddRoute()">➕ Add Route with Societies</button>
-    <h3>📊 Driver Visit Logs</h3>
 
-<label>📅 Date:</label>
-<input type="date" id="filterDate"><br><br>
-
-<label>🛣️ Route:</label>
-<select id="filterRoute">
-  <option value="">All Routes</option>
-</select><br><br>
-
-<label>⏰ Shift:</label>
-<select id="filterShift">
-  <option value="">All Shifts</option>
-  <option value="Morning">Morning</option>
-  <option value="Evening">Evening</option>
-</select><br><br>
-
-<button onclick="applyAdminFilters()">🔍 Apply Filters</button><br><br>
-    <hr><br>
-<h3>Driver Status</h3>
-<div id="adminStatusTable"></div>
     <div id="societyEditor"></div><br>
 
     <input id="newSocietyName" placeholder="New Society Name">
     <button onclick="addSociety()">Add Society</button><br><br>
 
     <input id="newRouteNumber" placeholder="New Route Number">
-    <button onclick="addRoute()">Add Route</button>
+    <button onclick="addRoute()">Add Route</button><br><br>
+
+    <hr><br>
+
+    <!-- 📥 Bulk Add Routes -->
+    <h3>📥 Bulk Add Route with Societies</h3>
+    <input id="bulkRouteNumber" placeholder="Route Number"><br><br>
+    <textarea id="bulkSocieties" rows="6" style="width:100%;" placeholder="Enter societies (one per line or comma-separated)"></textarea><br>
+    <button onclick="bulkAddRoute()">➕ Add Route with Societies</button><br><br>
+
+    <hr><br>
+
+    <!-- 📊 Filter Visit Logs -->
+    <h3>📊 Driver Visit Logs</h3>
+
+    <label>📅 Date:</label>
+    <input type="date" id="filterDate"><br><br>
+
+    <label>🛣️ Route:</label>
+    <select id="filterRoute">
+      <option value="">All Routes</option>
+    </select><br><br>
+
+    <label>⏰ Shift:</label>
+    <select id="filterShift">
+      <option value="">All Shifts</option>
+      <option value="Morning">Morning</option>
+      <option value="Evening">Evening</option>
+    </select><br><br>
+
+    <button onclick="applyAdminFilters()">🔍 Apply Filters</button><br><br>
+
+    <h3>Driver Status</h3>
+    <div id="adminStatusTable"></div>
   </div>
 
   <!-- 🔔 Toast Notification -->
   <div id="toast" class="toast"></div>
-<button onclick="localStorage.clear(); location.reload()">🔁 Reset App</button>
-  <!-- ✅ Link JS -->
+
+  <!-- 🔁 Reset App -->
+  <button onclick="localStorage.clear(); location.reload()">🔁 Reset App</button>
+
+  <!-- ✅ JavaScript -->
   <script src="script.js"></script>
+
 </body>
-</html>
