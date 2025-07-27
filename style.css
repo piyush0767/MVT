@@ -137,3 +137,87 @@ button.active {
   opacity: 0;
   transition: opacity 0.3s;
 }
+/* Status text under each society */
+.society-status {
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #333;
+}
+
+/* Specific arrival/departure colors */
+.arrival-time {
+  color: green;
+  font-weight: bold;
+}
+
+.departure-time {
+  color: red;
+  font-weight: bold;
+}
+
+/* Admin filter section */
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.admin-filters select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Admin status table */
+#adminStatusTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#adminStatusTable th,
+#adminStatusTable td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 14px;
+}
+
+#adminStatusTable th {
+  background-color: #0b5394;
+  color: white;
+}
+
+#adminStatusTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  .admin-filters {
+    flex-direction: column;
+  }
+
+  .login-section,
+  .driver-section,
+  .admin-section,
+  .admin-panel {
+    margin: 20px 10px;
+    padding: 15px;
+  }
+
+  #adminStatusTable th, #adminStatusTable td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .society {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .society-actions {
+    margin-top: 8px;
+  }
+}
