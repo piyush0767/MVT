@@ -48,23 +48,41 @@ function saveRouteData() {
 // ========== DRIVER LOGIN ==========
 function driverLogin() {
   const route = document.getElementById("routeNumber").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const password = document.getElementById("password").value;
   const shift = document.getElementById("shiftSelector").value;
 
-  if (!route || !password || !shift) return showToast("Please fill all fields", "error");
-
-  if (!routeData[route] || routeData[route].password !== password) {
-    return showToast("Invalid route number or password", "error");
+  const routeDataString = localStorage.getItem("routeData");
+  
+  if (!routeDataString) {
+    showToast("⚠️ No route data found. Try reloading or re-initializing.", "error");
+    alert("Route data missing in localStorage!");
+    return;
   }
 
-  // Success
-  document.getElementById("driverLoginSection").style.display = "none";
-  document.querySelector(".driver-section").style.display = "block";
-  document.getElementById("routeHeader").innerText = route;
-  document.getElementById("shiftHeader").innerText = shift;
-  document.getElementById("timeHeader").innerText = new Date().toLocaleTimeString();
+  const routeData = JSON.parse(routeDataString);
 
-  populateSocieties(route);
+  if (!routeData[route]) {
+    showToast(`❌ Route ${route} not found`, "error");
+    alert("Route not found");
+    return;
+  }
+
+  if (routeData[route].password !== password) {
+    showToast("❌ Incorrect password", "error");
+    alert("Wrong password");
+    return;
+  }
+
+  // ✅ Success
+  document.querySelector(".driver-section").classList.remove("hidden");
+  document.getElementById("driverRoute").innerText = route;
+  document.getElementById("shiftDisplay").innerText = "Shift: " + shift;
+  document.getElementById("loginTime").innerText = "Login Time: " + new Date().toLocaleTimeString();
+  document.getElementById("driverLoginSection").classList.add("hidden");
+  document.getElementById("adminLoginSection").classList.add("hidden");
+
+  showSocietyList(route, shift);
+  showToast("✅ Login successful", "info");
 }
 
 // ========== POPULATE SOCIETIES ==========
@@ -255,4 +273,9 @@ function showToast(message, type = "info") {
 document.addEventListener("DOMContentLoaded", () => {
   MilkRouteTracker.init();
   loadLanguage();
+});
+document.addEventListener("DOMContentLoaded", function () {
+  MilkRouteTracker.init();
+  loadRouteData();
+  loadLanguage(); // if using language switching
 });
