@@ -133,7 +133,17 @@ function deleteSociety(index) {
   saveRouteData();
   loadSocietiesForEdit();
 }
-
+function populateAdminRouteDropdown() {
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  const selector = document.getElementById("adminRouteFilter");
+  selector.innerHTML = '<option value="">All Routes</option>';
+  for (let route in routeData) {
+    const opt = document.createElement("option");
+    opt.value = route;
+    opt.textContent = route;
+    selector.appendChild(opt);
+  }
+}
 function addRoute() {
   const newRoute = document.getElementById("newRouteNumber").value.trim();
   if (!routeData[newRoute]) {
@@ -413,6 +423,55 @@ function exportCSV() {
   a.href = url;
   a.download = "visit_summary.csv";
   a.click();
+}
+function filterDriverLogs() {
+  const date = document.getElementById("adminDate").value;
+  const route = document.getElementById("adminRouteFilter").value;
+  const shift = document.getElementById("adminShiftFilter").value;
+
+  const logs = JSON.parse(localStorage.getItem("driverLogs") || "[]");
+
+  // Filter logs
+  const filtered = logs.filter(log =>
+    (!date || log.date === date) &&
+    (!route || log.route === route) &&
+    (!shift || log.shift === shift)
+  );
+
+  const container = document.getElementById("adminStatusTable");
+  container.innerHTML = "";
+
+  if (filtered.length === 0) {
+    container.innerHTML = "<p>No logs found.</p>";
+    return;
+  }
+
+  const table = document.createElement("table");
+  table.innerHTML = `
+    <tr>
+      <th>Date</th>
+      <th>Route</th>
+      <th>Shift</th>
+      <th>Society</th>
+      <th>Arrival</th>
+      <th>Departure</th>
+    </tr>
+  `;
+
+  filtered.forEach(log => {
+    table.innerHTML += `
+      <tr>
+        <td>${log.date}</td>
+        <td>${log.route}</td>
+        <td>${log.shift}</td>
+        <td>${log.society}</td>
+        <td>${log.arrivalTime || "-"}</td>
+        <td>${log.departureTime || "-"}</td>
+      </tr>
+    `;
+  });
+
+  container.appendChild(table);
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
