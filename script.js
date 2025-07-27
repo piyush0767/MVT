@@ -24,6 +24,10 @@ function driverLogin() {
   const route = document.getElementById("routeNumber").value.trim();
   const password = document.getElementById("password").value;
   const shift = document.getElementById("shiftSelector").value;
+  const date = new Date().toISOString().slice(0, 10); // today's date
+localStorage.setItem("currentRoute", route);
+localStorage.setItem("currentShift", shift);
+localStorage.setItem("currentDate", date);
 
   if (routeData[route] && routeData[route].password === password) {
     document.querySelector("#driverLoginSection").classList.add("hidden");
@@ -60,7 +64,6 @@ societies.forEach((soc, index) => {
     showToast("Invalid route or password", true);
   }
 }
-
 // ========== ADMIN LOGIN ==========
 function adminLogin() {
   const username = document.getElementById("adminUsername").value;
@@ -203,21 +206,44 @@ function bulkAddRoute() {
 
   showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
 }
-function markStatus(route, shift, society, type, btn) {
-  const statusKey = `status_${route}_${shift}`;
-  let savedStatus = JSON.parse(localStorage.getItem(statusKey)) || {};
+function markStatus(societyName, type) {
+  const route = localStorage.getItem("currentRoute");
+  const shift = localStorage.getItem("currentShift") || "Unknown";
+  const date = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+  const time = new Date().toLocaleTimeString(); // hh:mm:ss
 
-  if (!savedStatus[society]) savedStatus[society] = {};
-  savedStatus[society][type] = true;
+  let logs = JSON.parse(localStorage.getItem("driverStatusLog")) || [];
 
-  localStorage.setItem(statusKey, JSON.stringify(savedStatus));
+  // Check if there's already a log for same route, shift, date, society
+  let existing = logs.find(log =>
+    log.route === route &&
+    log.shift === shift &&
+    log.date === date &&
+    log.society === societyName
+  );
 
-  const statusSpan = document.getElementById(`status_${route}_${shift}_${society.replace(/\s+/g, '_')}`);
-  statusSpan.innerText = "";
-  if (savedStatus[society].arrival) statusSpan.innerText += "🟢 Arrived ";
-  if (savedStatus[society].departure) statusSpan.innerText += "🔴 Departed";
+  if (!existing) {
+    // Create new entry
+    existing = {
+      route,
+      shift,
+      date,
+      society: societyName,
+      arrivalTime: "",
+      departureTime: ""
+    };
+    logs.push(existing);
+  }
 
-  showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} marked for ${society}`);
+  // Update arrival or departure time
+  if (type === "arrival") existing.arrivalTime = time;
+  if (type === "departure") existing.departureTime = time;
+
+  // Save back
+  localStorage.setItem("driverStatusLog", JSON.stringify(logs));
+
+  showToast(`✅ ${type} marked for ${societyName}`, false);
+  renderDriverView(); // to update buttons
 }
 function showAdminStatus(routeNumber) {
   const data = JSON.parse(localStorage.getItem("routeData")) || {};
