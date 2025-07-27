@@ -79,3 +79,61 @@ button.active {
   padding: 10px;
   border-radius: 8px;
 }
+/* Society item styling */
+.society-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Action buttons */
+.society-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.society-actions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.society-actions button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* Time display */
+.time-display {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.time-display span {
+  display: block;
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 4px;
+  color: white;
+  z-index: 1000;
+}
+
+.toast.error { background-color: #f44336; }
+.toast.info { background-color: #2196F3; }
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
