@@ -525,6 +525,24 @@ function populateSummaryRouteDropdown() {
     select.appendChild(option);
   }
 }
+const MilkRouteTracker = {
+  init: function () {
+    // Load data or sample defaults
+    if (!localStorage.getItem("routeData")) {
+      saveRouteData(); // Save default hardcoded routeData
+    }
+
+    // Populate dropdowns once
+    populateRouteSelector();
+    populateFilterRoutes();
+    populateAdminRouteDropdown();
+    populateSummaryRouteDropdown();
+    populateSummaryRouteFilter();
+
+    console.log("✅ MilkRouteTracker initialized.");
+  }
+};
+
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
   const toast = document.getElementById("toast");
@@ -532,11 +550,10 @@ function showToast(msg, isError = false) {
   toast.className = "toast show " + (isError ? "error" : "info");
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
+
+// 🟢 Initial load
 window.onload = function () {
-  MilkRouteTracker.init();                        // ⬅️ Initializes routes from localStorage or loads sample data
-  populateFilterRoutes();                         // ⬅️ Fills filters for Driver Logs
-  populateAdminRouteDropdown();                   // ⬅️ Fills route selector for Admin logs
-  populateSummaryRouteDropdown();                 // ⬅️ Fills route dropdown in summary table
+  MilkRouteTracker.init(); // 🔁 Only call this — it includes everything needed
   document.querySelector(".driver-section").classList.add("hidden");
   document.querySelector(".admin-section").classList.add("hidden");
 };
