@@ -34,13 +34,28 @@ function driverLogin() {
     document.getElementById("shiftDisplay").textContent = `Shift: ${shift}`;
     document.getElementById("loginTime").textContent = `Login Time: ${new Date().toLocaleTimeString()}`;
 
-    const societyList = document.getElementById("societyList");
-    societyList.innerHTML = "";
-    routeData[route].societies.forEach(soc => {
-      const div = document.createElement("div");
-      div.textContent = soc;
-      societyList.appendChild(div);
-    });
+    const societies = routeData[route].societies;
+societyList.innerHTML = "";
+
+const statusKey = `status_${route}_${shift}`;
+const savedStatus = JSON.parse(localStorage.getItem(statusKey)) || {};
+
+societies.forEach((soc, index) => {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <b>${index + 1}. ${soc}</b>
+    <button onclick="markStatus('${route}','${shift}','${soc}','arrival', this)">Arrival</button>
+    <button onclick="markStatus('${route}','${shift}','${soc}','departure', this)">Departure</button>
+    <span id="status_${route}_${shift}_${soc.replace(/\s+/g, '_')}"></span>
+  `;
+  societyList.appendChild(div);
+
+  // Restore saved status
+  const status = savedStatus[soc] || {};
+  const span = document.getElementById(`status_${route}_${shift}_${soc.replace(/\s+/g, '_')}`);
+  if (status.arrival) span.innerText += "🟢 Arrived ";
+  if (status.departure) span.innerText += "🔴 Departed";
+});
   } else {
     showToast("Invalid route or password", true);
   }
@@ -182,6 +197,22 @@ function bulkAddRoute() {
   document.getElementById("bulkSocieties").value = "";
 
   showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
+}
+function markStatus(route, shift, society, type, btn) {
+  const statusKey = `status_${route}_${shift}`;
+  let savedStatus = JSON.parse(localStorage.getItem(statusKey)) || {};
+
+  if (!savedStatus[society]) savedStatus[society] = {};
+  savedStatus[society][type] = true;
+
+  localStorage.setItem(statusKey, JSON.stringify(savedStatus));
+
+  const statusSpan = document.getElementById(`status_${route}_${shift}_${society.replace(/\s+/g, '_')}`);
+  statusSpan.innerText = "";
+  if (savedStatus[society].arrival) statusSpan.innerText += "🟢 Arrived ";
+  if (savedStatus[society].departure) statusSpan.innerText += "🔴 Departed";
+
+  showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} marked for ${society}`);
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
