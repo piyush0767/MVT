@@ -76,15 +76,17 @@ function adminLogin() {
     document.querySelector("#adminLoginSection").classList.add("hidden");
     document.querySelector(".admin-section").classList.remove("hidden");
 
-    showAdminTab('routes'); // ✅ Show the default admin tab
+    showAdminTab('routes'); // ✅ Open default tab
 
-    populateRouteSelector();
-    populateSummaryRouteFilter();
+    // 🟢 Add all route dropdown populators:
+    populateRouteSelector();              // Optional (used somewhere?)
+    populateSummaryRouteFilter();         // ✅ Summary filters
+    populateSummaryRouteDropdown();       // ✅ Summary dropdown
+    populateAdminRouteDropdown();         // ✅ Logs dropdown
   } else {
     showToast("Invalid admin credentials", true);
   }
 }
-
 // ========== ADMIN FUNCTIONS ==========
 function populateRouteSelector() {
   const selector = document.getElementById("routeSelector");
@@ -545,14 +547,56 @@ const MilkRouteTracker = {
   }
 };
 function showAdminTab(tabName) {
-  // Hide all admin-tab divs
   document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.add('hidden'));
 
-  // Show the selected tab
   const selectedTab = document.getElementById('adminTab-' + tabName);
   if (selectedTab) {
     selectedTab.classList.remove('hidden');
+
+    if (tabName === 'routes') {
+      renderRouteManagementUI(); // 🔁 Show routes when tab is opened
+    }
   }
+}
+function renderRouteManagementUI() {
+  const container = document.getElementById("routeManagementArea");
+  container.innerHTML = ''; // Clear "Loading..."
+
+  const heading = document.createElement("h3");
+  heading.textContent = "Select Route to Edit Societies";
+  container.appendChild(heading);
+
+  const dropdown = document.createElement("select");
+  dropdown.id = "routeSelectDropdown";
+  container.appendChild(dropdown);
+
+  // Load routes from localStorage
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+
+  // Add route options
+  Object.keys(routeData).forEach(route => {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    dropdown.appendChild(option);
+  });
+
+  // Add message if no routes
+  if (Object.keys(routeData).length === 0) {
+    const msg = document.createElement("p");
+    msg.textContent = "No routes found. Add routes in Settings.";
+    container.appendChild(msg);
+  }
+
+  // Add a button to edit selected route
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit Societies";
+  editBtn.onclick = () => {
+    const selectedRoute = dropdown.value;
+    alert("Route selected: " + selectedRoute);
+    // (You can replace this alert with society editing logic later)
+  };
+  container.appendChild(editBtn);
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
