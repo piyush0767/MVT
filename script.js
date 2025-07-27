@@ -481,10 +481,10 @@ function showToast(msg, isError = false) {
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
 window.onload = function () {
-  populateFilterRoutes();
-  // (add any other setup functions here)
-};
-window.onload = function () {
+  MilkRouteTracker.init();                        // ⬅️ Initializes routes from localStorage or loads sample data
+  populateFilterRoutes();                         // ⬅️ Fills filters for Driver Logs
+  populateAdminRouteDropdown();                   // ⬅️ Fills route selector for Admin logs
+  populateSummaryRouteDropdown();                 // ⬅️ Fills route dropdown in summary table
   document.querySelector(".driver-section").classList.add("hidden");
   document.querySelector(".admin-section").classList.add("hidden");
 };
