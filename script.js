@@ -542,7 +542,16 @@ const MilkRouteTracker = {
     console.log("✅ MilkRouteTracker initialized.");
   }
 };
+function showAdminTab(tabName) {
+  // Hide all admin-tab divs
+  document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.add('hidden'));
 
+  // Show the selected tab
+  const selectedTab = document.getElementById('adminTab-' + tabName);
+  if (selectedTab) {
+    selectedTab.classList.remove('hidden');
+  }
+}
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
   const toast = document.getElementById("toast");
