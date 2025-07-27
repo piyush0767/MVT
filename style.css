@@ -1,109 +1,116 @@
-/* ===== General Styles ===== */ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; color: #333; margin: 0; padding: 20px; line-height: 1.5; }
-
-.container { max-width: 900px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-
-h2, h3 { color: #0b5394; margin-top: 20px; margin-bottom: 10px; }
-
-/* ===== Buttons ===== */ button { background-color: #0b5394; color: white; border: none; padding: 10px 16px; margin: 5px 0; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.3s ease; }
-
-button:hover { background-color: #073763; }
-
-/* ===== Inputs and Selects ===== */ input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
-
-/* ===== Toast Notifications ===== */ .toast { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 5px; opacity: 0; transition: opacity 0.5s; z-index: 1000; }
-
-.toast.show { opacity: 1; }
-
-.toast.error { background: #e53935; }
-
-.toast.info { background: #43a047; }
-
-/* ===== Society Time Stamps ===== */ .arrival-time { color: green; font-weight: bold; }
-
-.departure-time { color: red; font-weight: bold; }
-
-/* ===== Admin Filter Section ===== */ .admin-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-
-.admin-filters select { padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
-
-/* ===== Admin Table ===== */ #adminStatusTable { width: 100%; border-collapse: collapse; margin-top: 10px; }
-
-#adminStatusTable th, #adminStatusTable td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 14px; }
-
-#adminStatusTable th { background-color: #0b5394; color: white; }
-
-#adminStatusTable tr:nth-child(even) { background-color: #f9f9f9; }
-
-/* ===== Responsive Design ===== */ @media (max-width: 600px) { .admin-filters { flex-direction: column; }
-
-.login-section, .driver-section, .admin-section, .admin-panel { margin: 20px 10px; padding: 15px; }
-
-#adminStatusTable th, #adminStatusTable td { font-size: 12px; padding: 6px; }
-
-.society { flex-direction: column; align-items: flex-start; }
-
-.society-actions { margin-top: 8px; } }
-
-/* === Layout Containers === */
-.login-section, .admin-section, .driver-section {
-  max-width: 400px;
-  margin: 40px auto;
-  background-color: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+/* ========== BASIC RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }
 
-/* === Headings === */
-h2, h3 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #0b5394;
-}
-
-/* === Labels & Inputs === */
-label {
-  font-weight: 500;
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 4px;
+body {
+  background-color: #f9f9f9;
+  padding: 20px;
   color: #333;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="date"],
-textarea,
-select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
+/* ========== HIDDEN CLASS ========== */
+.hidden {
+  display: none;
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #0b5394;
-  outline: none;
-}
-
-/* === Buttons === */
+/* ========== LANGUAGE TOGGLE ========== */
 button {
-  display: inline-block;
-  margin-top: 15px;
-  width: 100%;
-  background-color: #0b5394;
-  color: #fff;
-  padding: 10px 12px;
-  font-size: 15px;
+  padding: 10px 16px;
+  margin: 10px 5px;
   border: none;
-  border-radius: 8px;
+  background-color: #2e86de;
+  color: white;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #06376c;
+  background-color: #1b4f72;
+}
+
+/* ========== LOGIN BOXES ========== */
+#driverLoginSection,
+#adminLoginSection {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* ========== DRIVER SECTION ========== */
+.driver-section {
+  background-color: #e8f8f5;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#societyList {
+  margin-top: 20px;
+}
+
+/* ========== ADMIN PANEL ========== */
+.admin-section {
+  background-color: #fef9e7;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 1000px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#adminStatusTable {
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* ========== TOAST ========== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #27ae60;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 5px;
+  display: none;
+  z-index: 999;
+}
+
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 600px) {
+  #driverLoginSection,
+  #adminLoginSection,
+  .driver-section,
+  .admin-section {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 10px;
+  }
 }
