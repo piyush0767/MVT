@@ -1,19 +1,35 @@
 // ========== DATA INITIALIZATION ==========
+
 const MilkRouteTracker = {
+
   // Initialize sample data if not exists
+
   init: function() {
+
     if (!localStorage.getItem("initialized")) {
+
       localStorage.setItem("routeData", JSON.stringify(this.routeData));
+
       localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
+
       localStorage.setItem("initialized", "yes");
-      alert("✅ Sample data loaded! Try logging in now.");
+
+      this.showToast("✅ Sample data loaded! Try logging in now.", "info");
+
     } else {
+
       // Load existing data
+
       const storedRoutes = localStorage.getItem("routeData");
+
       if (storedRoutes) this.routeData = JSON.parse(storedRoutes);
+
+     
+
+      const storedAdmins = localStorage.getItem("mccAdmins");
+      if (storedAdmins) this.mccAdmins = JSON.parse(storedAdmins);
     }
   },
-
   // MCC Admin data
   mccAdmins: {
     "Khushipur": {
@@ -22,13 +38,13 @@ const MilkRouteTracker = {
               "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
               "1820", "1821", "1822", "1823", "1824", "1825", "1826", "1827",
               "1828", "1830", "1831", "1834"]
+
     },
     "Shivpur": {
       password: "admin456",
       routes: ["1805", "1808", "1809"]
     }
   },
-
   // Complete Route Data
   routeData: {
     "1801": {
@@ -507,238 +523,723 @@ const routeData = {
     ]
   }
 };
-  // Current session data
+    // Current session data
+
   currentSession: {
+
     mccName: "",
+
     driverRoute: "",
-    shift: ""
+
+    shift: "",
+
+    societies: {}
+
   },
+
+
 
   // ========== CORE FUNCTIONS ==========
+
   saveData: function() {
+
     localStorage.setItem("routeData", JSON.stringify(this.routeData));
+
+    localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
+
   },
 
-// Enhanced Driver Login Function
-driverLogin: function() {
-  // Get input values
-  const route = document.getElementById("routeNumber").value.trim();
-  const password = document.getElementById("password").value;
-  const shift = document.getElementById("shiftSelector").value;
 
-  // Validate inputs
-  if (!route || !password || !shift) {
-    this.showToast("Please fill all fields", "error");
-    return;
-  }
 
-  // Check credentials
-  if (!this.routeData[route] || this.routeData[route].password !== password) {
-    this.showToast("Invalid Route No or Password", "error");
-    return;
-  }
+  // Enhanced Driver Login Function
 
-  // Start session
-  this.currentSession = {
-    driverRoute: route,
-    shift: shift,
-    loginTime: new Date().toISOString(),
-    societies: {}
-  };
+  driverLogin: function() {
 
-  // Update UI
-  this.showDriverDashboard(route, shift);
-  this.renderSocietyList(route);
-},
+    console.log("Driver login function called");
 
-// Show driver dashboard
-showDriverDashboard: function(route, shift) {
-  document.querySelector(".login-section").classList.add("hidden");
-  document.querySelector(".driver-section").classList.remove("hidden");
-  
-  document.getElementById("driverRoute").textContent = route;
-  document.getElementById("shiftDisplay").textContent = `Shift: ${shift}`;
-  document.getElementById("loginTime").textContent = `Login: ${new Date().toLocaleTimeString()}`;
-},
-
-// Render society list with tracking
-renderSocietyList: function(route) {
-  const societyList = document.getElementById("societyList");
-  societyList.innerHTML = "";
-
-  this.routeData[route].societies.forEach((society, index) => {
-    const societyItem = document.createElement("div");
-    societyItem.className = "society-item";
-    societyItem.innerHTML = `
-      <div class="society-info">
-        <span class="society-name">${index + 1}. ${society}</span>
-        <div class="time-display">
-          <span class="arrival-time hidden">Arrived: --:--</span>
-          <span class="dispatch-time hidden">Dispatched: --:--</span>
-        </div>
-      </div>
-      <div class="society-actions">
-        <button class="arrival-btn" data-id="${index}">
-          <span class="icon">✅</span>
-          <span class="text">Arrived</span>
-        </button>
-        <button class="dispatch-btn" data-id="${index}">
-          <span class="icon">📤</span>
-          <span class="text">Dispatch</span>
-        </button>
-      </div>
-    `;
-    societyList.appendChild(societyItem);
-  });
-
-  // Add event listeners
-  this.setupSocietyButtons();
-},
-
-// Setup button handlers with touch support
-setupSocietyButtons: function() {
-  // Handle both click and touch events
-  const handleAction = (e, actionType) => {
-    const button = e.currentTarget;
-    const societyIndex = button.getAttribute("data-id");
-    const time = new Date().toLocaleTimeString();
     
-    // Update UI
-    button.classList.add("active");
-    const timeDisplay = button.closest(".society-item").querySelector(`.${actionType}-time`);
-    timeDisplay.textContent = `${actionType === "arrival" ? "Arrived" : "Dispatched"}: ${time}`;
-    timeDisplay.classList.remove("hidden");
-    
-    // Store in session
-    if (!this.currentSession.societies[societyIndex]) {
-      this.currentSession.societies[societyIndex] = {};
+
+    // Get input values
+
+    const route = document.getElementById("routeNumber")?.value?.trim();
+
+    const password = document.getElementById("password")?.value;
+
+    const shift = document.getElementById("shiftSelector")?.value;
+
+
+
+    console.log("Route:", route, "Password:", password, "Shift:", shift);
+
+
+
+    // Validate inputs
+
+    if (!route || !password || !shift) {
+
+      this.showToast("Please fill all fields", "error");
+
+      return false;
+
     }
-    this.currentSession.societies[societyIndex][actionType] = time;
-  };
 
-  // Arrival buttons
-  document.querySelectorAll(".arrival-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => handleAction(e, "arrival"));
-    btn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      handleAction(e, "arrival");
-    });
-  });
 
-  // Dispatch buttons
-  document.querySelectorAll(".dispatch-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => handleAction(e, "dispatch"));
-    btn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      handleAction(e, "dispatch");
-    });
-  });
-},
 
-// Show toast notification (better than alert)
-showToast: function(message, type = "info") {
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.classList.add("fade-out");
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
+    // Check credentials
+
+    if (!this.routeData[route] || this.routeData[route].password !== password) {
+
+      this.showToast("Invalid Route No or Password", "error");
+
+      return false;
+
+    }
+
+
+
+    // Start session
+
+    this.currentSession = {
+
+      driverRoute: route,
+
+      shift: shift,
+
+      loginTime: new Date().toISOString(),
+
+      societies: {}
+
+    };
+
+
+
+    // Update UI
+
+    this.showDriverDashboard(route, shift);
+
+    this.renderSocietyList(route);
+
+    return true;
+
+  },
+
+
+
   // MCC Admin login function
+
   mccAdminLogin: function() {
-    const mccName = document.getElementById("mccName").value.trim();
-    const mccPassword = document.getElementById("mccPassword").value;
+
+    console.log("MCC Admin login function called");
+
+    
+
+    const mccName = document.getElementById("mccName")?.value?.trim();
+
+    const mccPassword = document.getElementById("mccPassword")?.value;
+
+
+
+    console.log("MCC Name:", mccName, "Password:", mccPassword);
+
+
+
+    // Validate inputs
+
+    if (!mccName || !mccPassword) {
+
+      this.showToast("Please fill all fields", "error");
+
+      return false;
+
+    }
+
+
 
     if (this.mccAdmins[mccName] && this.mccAdmins[mccName].password === mccPassword) {
+
       this.currentSession.mccName = mccName;
+
       
+
       // Update UI
-      document.querySelector(".login-section").classList.add("hidden");
-      document.querySelector(".admin-section").classList.remove("hidden");
-      document.getElementById("adminRoute").textContent = mccName;
+
+      document.getElementById("driverLoginSection")?.classList.add("hidden");
+
+      document.getElementById("adminLoginSection")?.classList.add("hidden");
+
+      document.querySelector(".admin-section")?.classList.remove("hidden");
+
+      
+
+      const adminRouteElement = document.getElementById("adminRoute");
+
+      if (adminRouteElement) adminRouteElement.textContent = mccName;
+
+
 
       this.renderAdminRoutes(mccName);
+
       this.populateRouteDropdown();
+
+      return true;
+
     } else {
-      alert("Invalid MCC Name or Password");
+
+      this.showToast("Invalid MCC Name or Password", "error");
+
+      return false;
+
     }
+
   },
 
-  // ========== ADMIN FUNCTIONS ==========
-  renderAdminRoutes: function(mccName) {
-    const routeContainer = document.getElementById("routeData");
-    routeContainer.innerHTML = "";
 
-    const adminRoutes = this.mccAdmins[mccName]?.routes || [];
+
+  // Show driver dashboard
+
+  showDriverDashboard: function(route, shift) {
+
+    // Hide login sections
+
+    document.getElementById("driverLoginSection")?.classList.add("hidden");
+
+    document.getElementById("adminLoginSection")?.classList.add("hidden");
+
     
-    adminRoutes.forEach(route => {
-      const routeBlock = document.createElement("div");
-      routeBlock.className = "route-block";
-      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
 
-      const societies = this.routeData[route]?.societies || [];
-      if (societies.length === 0) {
-        routeBlock.innerHTML += "<p>No societies found.</p>";
-      } else {
-        const list = document.createElement("ul");
-        societies.forEach(society => {
-          const item = document.createElement("li");
-          item.textContent = society;
-          list.appendChild(item);
-        });
-        routeBlock.appendChild(list);
+    // Show driver section
+
+    const driverSection = document.querySelector(".driver-section");
+
+    if (driverSection) driverSection.classList.remove("hidden");
+
+    
+
+    // Update display elements
+
+    const driverRouteElement = document.getElementById("driverRoute");
+
+    const shiftDisplayElement = document.getElementById("shiftDisplay");
+
+    const loginTimeElement = document.getElementById("loginTime");
+
+    
+
+    if (driverRouteElement) driverRouteElement.textContent = route;
+
+    if (shiftDisplayElement) shiftDisplayElement.textContent = `Shift: ${shift}`;
+
+    if (loginTimeElement) loginTimeElement.textContent = `Login: ${new Date().toLocaleTimeString()}`;
+
+  },
+
+
+
+  // Render society list with tracking
+
+  renderSocietyList: function(route) {
+
+    const societyList = document.getElementById("societyList");
+
+    if (!societyList) return;
+
+    
+
+    societyList.innerHTML = "";
+
+
+
+    if (!this.routeData[route] || !this.routeData[route].societies) {
+
+      societyList.innerHTML = "<p>No societies found for this route.</p>";
+
+      return;
+
+    }
+
+
+
+    this.routeData[route].societies.forEach((society, index) => {
+
+      const societyItem = document.createElement("div");
+
+      societyItem.className = "society-item";
+
+      societyItem.innerHTML = `
+
+        <div class="society-info">
+
+          <span class="society-name">${index + 1}. ${society}</span>
+
+          <div class="time-display">
+
+            <span class="arrival-time hidden">Arrived: --:--</span>
+
+            <span class="dispatch-time hidden">Dispatched: --:--</span>
+
+          </div>
+
+        </div>
+
+        <div class="society-actions">
+
+          <button class="arrival-btn" data-id="${index}">
+
+            <span class="icon">✅</span>
+
+            <span class="text">Arrived</span>
+
+          </button>
+
+          <button class="dispatch-btn" data-id="${index}">
+
+            <span class="icon">📤</span>
+
+            <span class="text">Dispatch</span>
+
+          </button>
+
+        </div>
+
+      `;
+
+      societyList.appendChild(societyItem);
+
+    });
+
+
+
+    // Add event listeners
+
+    this.setupSocietyButtons();
+
+  },
+
+
+
+  // Setup button handlers
+
+  setupSocietyButtons: function() {
+
+    const handleAction = (e, actionType) => {
+
+      e.preventDefault();
+
+      const button = e.currentTarget;
+
+      const societyIndex = button.getAttribute("data-id");
+
+      const time = new Date().toLocaleTimeString();
+
+      
+
+      // Update UI
+
+      button.classList.add("active");
+
+      const timeDisplay = button.closest(".society-item").querySelector(`.${actionType}-time`);
+
+      if (timeDisplay) {
+
+        timeDisplay.textContent = `${actionType === "arrival" ? "Arrived" : "Dispatched"}: ${time}`;
+
+        timeDisplay.classList.remove("hidden");
+
       }
 
-      routeContainer.appendChild(routeBlock);
+      
+
+      // Store in session
+
+      if (!this.currentSession.societies[societyIndex]) {
+
+        this.currentSession.societies[societyIndex] = {};
+
+      }
+
+      this.currentSession.societies[societyIndex][actionType] = time;
+
+      
+
+      this.showToast(`${actionType === "arrival" ? "Arrival" : "Dispatch"} recorded at ${time}`, "info");
+
+    };
+
+
+
+    // Arrival buttons
+
+    document.querySelectorAll(".arrival-btn").forEach(btn => {
+
+      btn.addEventListener("click", (e) => handleAction(e, "arrival"));
+
     });
+
+
+
+    // Dispatch buttons
+
+    document.querySelectorAll(".dispatch-btn").forEach(btn => {
+
+      btn.addEventListener("click", (e) => handleAction(e, "dispatch"));
+
+    });
+
   },
+
+
+
+  // Show toast notification
+
+  showToast: function(message, type = "info") {
+
+    const toast = document.getElementById("toast");
+
+    if (!toast) {
+
+      alert(message);
+
+      return;
+
+    }
+
+    
+
+    toast.textContent = message;
+
+    toast.className = `toast ${type} show`;
+
+    
+
+    setTimeout(() => {
+
+      toast.classList.remove("show");
+
+    }, 3000);
+
+  },
+
+
+
+  // ========== ADMIN FUNCTIONS ==========
+
+  renderAdminRoutes: function(mccName) {
+
+    const routeContainer = document.getElementById("routeData");
+
+    if (!routeContainer) return;
+
+    
+
+    routeContainer.innerHTML = "";
+
+
+
+    const adminRoutes = this.mccAdmins[mccName]?.routes || [];
+
+    
+
+    adminRoutes.forEach(route => {
+
+      const routeBlock = document.createElement("div");
+
+      routeBlock.className = "route-block";
+
+      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
+
+
+
+      const societies = this.routeData[route]?.societies || [];
+
+      if (societies.length === 0) {
+
+        routeBlock.innerHTML += "<p>No societies found.</p>";
+
+      } else {
+
+        const list = document.createElement("ul");
+
+        societies.forEach(society => {
+
+          const item = document.createElement("li");
+
+          item.textContent = society;
+
+          list.appendChild(item);
+
+        });
+
+        routeBlock.appendChild(list);
+
+      }
+
+
+
+      routeContainer.appendChild(routeBlock);
+
+    });
+
+  },
+
+
 
   populateRouteDropdown: function() {
+
     const dropdown = document.getElementById("routeSelectToEdit");
-    dropdown.innerHTML = '<option value="">Select Route</option>';
+
+    if (!dropdown) return;
+
     
+
+    dropdown.innerHTML = '<option value="">Select Route to Edit</option>';
+
+    
+
     for (const route in this.routeData) {
+
       const option = document.createElement("option");
+
       option.value = route;
+
       option.textContent = route;
+
       dropdown.appendChild(option);
+
     }
+
   },
 
+
+
   // ========== INITIALIZATION ==========
+
   setupEventListeners: function() {
-    // Mobile-friendly touch events
-    document.getElementById("driverLoginBtn").addEventListener("touchend", (e) => {
-      e.preventDefault();
-      this.driverLogin();
-    });
 
-    document.getElementById("adminLoginBtn").addEventListener("touchend", (e) => {
-      e.preventDefault();
-      this.mccAdminLogin();
-    });
+    console.log("Setting up event listeners");
 
-    // Click events for desktop
-    document.getElementById("driverLoginBtn").addEventListener("click", () => {
-      this.driverLogin();
-    });
+    
 
-    document.getElementById("adminLoginBtn").addEventListener("click", () => {
-      this.mccAdminLogin();
-    });
+    // Driver login form
 
-    // Form submission prevention
-    document.querySelectorAll("form").forEach(form => {
-      form.addEventListener("submit", (e) => e.preventDefault());
-    });
+    const driverForm = document.getElementById("driverLoginForm");
+
+    if (driverForm) {
+
+      driverForm.addEventListener("submit", (e) => {
+
+        e.preventDefault();
+
+        console.log("Driver form submitted");
+
+        this.driverLogin();
+
+      });
+
+    }
+
+
+
+    // Admin login form
+
+    const adminForm = document.getElementById("adminLoginForm");
+
+    if (adminForm) {
+
+      adminForm.addEventListener("submit", (e) => {
+
+        e.preventDefault();
+
+        console.log("Admin form submitted");
+
+        this.mccAdminLogin();
+
+      });
+
+    }
+
+
+
+    // Language selector (if you want to implement it later)
+
+    const languageSelect = document.getElementById("languageSelect");
+
+    if (languageSelect) {
+
+      languageSelect.addEventListener("change", (e) => {
+
+        // Implement language change functionality here
+
+        console.log("Language changed to:", e.target.value);
+
+      });
+
+    }
+
   }
+
 };
 
+
+
+// Global functions for admin panel (called from HTML onclick)
+
+function addRoute() {
+
+  const newRouteNumber = document.getElementById("newRouteNumber")?.value?.trim();
+
+  if (!newRouteNumber) {
+
+    MilkRouteTracker.showToast("Please enter a route number", "error");
+
+    return;
+
+  }
+
+  
+
+  if (MilkRouteTracker.routeData[newRouteNumber]) {
+
+    MilkRouteTracker.showToast("Route already exists", "error");
+
+    return;
+
+  }
+
+  
+
+  MilkRouteTracker.routeData[newRouteNumber] = {
+
+    password: `Milk${newRouteNumber}`,
+
+    societies: []
+
+  };
+
+  
+
+  MilkRouteTracker.saveData();
+
+  MilkRouteTracker.populateRouteDropdown();
+
+  MilkRouteTracker.renderAdminRoutes(MilkRouteTracker.currentSession.mccName);
+
+  MilkRouteTracker.showToast(`Route ${newRouteNumber} added successfully`, "info");
+
+  
+
+  document.getElementById("newRouteNumber").value = "";
+
+}
+
+
+
+function loadSocietiesForEdit() {
+
+  const selectedRoute = document.getElementById("routeSelectToEdit")?.value;
+
+  const editArea = document.getElementById("editSocietiesArea");
+
+  
+
+  if (!selectedRoute || !editArea) return;
+
+  
+
+  const societies = MilkRouteTracker.routeData[selectedRoute]?.societies || [];
+
+  editArea.innerHTML = `
+
+    <h4>Societies in Route ${selectedRoute}:</h4>
+
+    <ul>
+
+      ${societies.map(society => `<li>${society}</li>`).join('')}
+
+    </ul>
+
+  `;
+
+}
+
+
+
+function addSociety() {
+
+  const selectedRoute = document.getElementById("routeSelectToEdit")?.value;
+
+  const newSocietyName = document.getElementById("newSocietyName")?.value?.trim();
+
+  
+
+  if (!selectedRoute) {
+
+    MilkRouteTracker.showToast("Please select a route first", "error");
+
+    return;
+
+  }
+
+  
+
+  if (!newSocietyName) {
+
+    MilkRouteTracker.showToast("Please enter society name", "error");
+
+    return;
+
+  }
+
+  
+
+  if (!MilkRouteTracker.routeData[selectedRoute].societies) {
+
+    MilkRouteTracker.routeData[selectedRoute].societies = [];
+
+  }
+
+  
+
+  MilkRouteTracker.routeData[selectedRoute].societies.push(newSocietyName);
+
+  MilkRouteTracker.saveData();
+
+  loadSocietiesForEdit();
+
+  MilkRouteTracker.renderAdminRoutes(MilkRouteTracker.currentSession.mccName);
+
+  MilkRouteTracker.showToast("Society added successfully", "info");
+
+  
+
+  document.getElementById("newSocietyName").value = "";
+
+}
+
+
+
 // Initialize the application when DOM is loaded
+
 document.addEventListener("DOMContentLoaded", function() {
+
+  console.log("DOM loaded, initializing MilkRouteTracker");
+
   MilkRouteTracker.init();
+
   MilkRouteTracker.setupEventListeners();
+
 });
+
+
+
+// Fallback initialization
+
+if (document.readyState === "complete" || document.readyState === "interactive") {
+
+  console.log("Document already loaded, initializing immediately");
+
+  MilkRouteTracker.init();
+
+  MilkRouteTracker.setupEventListeners();
+
+}
+
