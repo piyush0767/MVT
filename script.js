@@ -473,6 +473,58 @@ function filterDriverLogs() {
 
   container.appendChild(table);
 }
+function loadAdminSummary() {
+  const date = document.getElementById("summaryDateFilter").value;
+  const route = document.getElementById("summaryRouteFilter").value;
+  const tbody = document.querySelector("#summaryTable tbody");
+  tbody.innerHTML = "";
+
+  if (!date || !route) {
+    alert("Please select both date and route.");
+    return;
+  }
+
+  const logs = JSON.parse(localStorage.getItem("driverLogs") || "[]");
+
+  const filteredLogs = logs.filter(log =>
+    log.date === date && log.route === route
+  );
+
+  filteredLogs.forEach(log => {
+    const row = document.createElement("tr");
+
+    const duration = log.arrivalTime && log.departureTime
+      ? getDuration(log.arrivalTime, log.departureTime)
+      : "";
+
+    row.innerHTML = `
+      <td>${log.society}</td>
+      <td>${log.arrivalTime || "-"}</td>
+      <td>${log.departureTime || "-"}</td>
+      <td>${duration}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function getDuration(start, end) {
+  const s = new Date("1970-01-01T" + start);
+  const e = new Date("1970-01-01T" + end);
+  const diff = (e - s) / 60000; // minutes
+  return isNaN(diff) ? "" : `${Math.floor(diff)} mins`;
+}
+function populateSummaryRouteDropdown() {
+  const select = document.getElementById("summaryRouteFilter");
+  select.innerHTML = '<option value="">Select Route</option>';
+
+  const data = JSON.parse(localStorage.getItem("routeData") || "{}");
+  for (let route in data) {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    select.appendChild(option);
+  }
+}
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
   const toast = document.getElementById("toast");
