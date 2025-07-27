@@ -76,6 +76,8 @@ function adminLogin() {
     document.querySelector("#adminLoginSection").classList.add("hidden");
     document.querySelector(".admin-section").classList.remove("hidden");
 
+    showAdminTab('routes'); // ✅ Show the default admin tab
+
     populateRouteSelector();
     populateSummaryRouteFilter();
   } else {
