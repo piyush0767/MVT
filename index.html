@@ -46,34 +46,30 @@
   </div>
 
   <!-- 🛠️ Admin Panel (Initially Hidden) -->
+<!-- 📊 Admin Dashboard -->
 <div class="admin-section hidden">
-  <div class="card">
-    <h2>🧭 Select Route</h2>
-    <select id="routeSelector" onchange="loadSocietiesForEdit()"></select>
-    <div id="societyEditor" class="society-list"></div>
+
+  <!-- 🔝 Navigation Tabs -->
+  <div class="admin-tabs">
+    <button onclick="showAdminTab('routes')">🚚 Routes</button>
+    <button onclick="showAdminTab('logs')">📋 Logs</button>
+    <button onclick="showAdminTab('summary')">📊 Summary</button>
+    <button onclick="showAdminTab('settings')">⚙️ Settings</button>
   </div>
 
-  <div class="card">
-    <h3>➕ Add New Society</h3>
-    <input type="text" id="newSocietyName" placeholder="New Society Name" />
-    <button onclick="addSociety()">Add Society</button>
+  <!-- 🧭 TAB SECTIONS -->
+
+  <!-- 🚚 ROUTE MANAGEMENT -->
+  <div class="admin-tab" id="adminTab-routes">
+    <h2>🚚 Route & Society Management</h2>
+    <!-- Place the route/society management section here -->
+    <!-- (same as before: route dropdown, add/delete buttons, bulk add etc.) -->
+    <div id="routeManagementArea">Loading...</div>
   </div>
 
-  <div class="card">
-    <h3>🚐 Add New Route</h3>
-    <input type="text" id="newRouteNumber" placeholder="New Route Number" />
-    <button onclick="addRoute()">Add Route</button>
-  </div>
-
-  <div class="card">
-    <h3>🎂 Bulk Add Route with Societies</h3>
-    <input type="text" id="bulkRouteNumber" placeholder="Route Number" />
-    <textarea id="bulkSocietyNames" placeholder="Enter societies (one per line or comma-separated)"></textarea>
-    <button onclick="bulkAddRoute()">➕ Add Route with Societies</button>
-  </div>
-
-  <div class="card">
-    <h3>📋 Driver Visit Logs</h3>
+  <!-- 📋 LOGS -->
+  <div class="admin-tab hidden" id="adminTab-logs">
+    <h2>📋 Driver Visit Logs</h2>
     <label>Date:</label>
     <input type="date" id="adminDate" />
 
@@ -87,40 +83,40 @@
       <option value="Evening">Evening</option>
     </select>
 
-    <button onclick="filterDriverLogs()">🧾 Apply Filters</button>
+    <button onclick="filterDriverLogs()">🔍 Apply Filters</button>
+
     <div id="adminStatusTable" class="driver-status"></div>
   </div>
 
-  <div class="card danger">
-    <button onclick="resetApp()">🧨 Reset App</button>
-  </div>
-  <!-- ➕ New Admin Summary Section -->
-<div class="card">
-  <h3>📊 Daily Visit Summary</h3>
-
-  <div class="admin-filters">
+  <!-- 📊 SUMMARY -->
+  <div class="admin-tab hidden" id="adminTab-summary">
+    <h2>📊 Daily Visit Summary</h2>
     <label>Date:</label>
     <input type="date" id="summaryDateFilter">
-
     <label>Route:</label>
     <select id="summaryRouteFilter"></select>
-
     <button onclick="loadAdminSummary()">🔍 View</button>
     <button onclick="exportCSV()">📤 Export CSV</button>
+
+    <table id="summaryTable">
+      <thead>
+        <tr>
+          <th>Society</th>
+          <th>Arrival</th>
+          <th>Departure</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <table id="summaryTable">
-    <thead>
-      <tr>
-        <th>Society</th>
-        <th>Arrival Time</th>
-        <th>Departure Time</th>
-        <th>Duration</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+  <!-- ⚙️ SETTINGS -->
+  <div class="admin-tab hidden" id="adminTab-settings">
+    <h2>⚙️ Admin Tools</h2>
+    <button onclick="resetApp()">🧨 Reset All Data</button>
+  </div>
+
 </div>
 
   <!-- 🔔 Toast Notification -->
