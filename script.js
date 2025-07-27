@@ -1,75 +1,54 @@
-// ========== GLOBAL DATA ==========
-let routeData = {}; // Holds all route + society + password info
-let mccAdmins = {}; // Holds MCC admin info
-
-// ========== INIT LOGIC ==========
+// ========== MilkRouteTracker App ==========
 const MilkRouteTracker = {
+  routeData: {
+    "1801": {
+      password: "Milk1801",
+      societies: ["Shiv Shakti", "Gokul Dham", "Green Valley"]
+    }
+  },
+  mccAdmins: {
+    "admin1801": "adminpass"
+  },
+
   init: function () {
     if (!localStorage.getItem("initialized")) {
-      // Sample Route Data
-      routeData = {
-        "1801": {
-          password: "Milk1801",
-          societies: ["Green Park", "Sunrise Nagar", "Shanti Vihar"]
-        },
-        "1802": {
-          password: "Milk1802",
-          societies: ["Radha Colony", "Laxmi Enclave"]
-        }
-      };
-
-      // Sample MCC Admins
-      mccAdmins = {
-        Khushipur: { password: "MCC123", routes: ["1801"] },
-        Devipur: { password: "MCC456", routes: ["1802"] }
-      };
-
-      localStorage.setItem("routeData", JSON.stringify(routeData));
-      localStorage.setItem("mccAdmins", JSON.stringify(mccAdmins));
+      localStorage.setItem("routeData", JSON.stringify(this.routeData));
+      localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
       localStorage.setItem("initialized", "yes");
-      showToast("✅ Sample data loaded!");
-    } else {
-      loadRouteData();
+      alert("✅ Sample data loaded.\nLogin with:\nRoute: 1801\nPassword: Milk1801");
     }
   }
 };
 
-// ========== LOAD FROM STORAGE ==========
+// ========== Load Data ==========
+let routeData = {};
 function loadRouteData() {
-  routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
-  mccAdmins = JSON.parse(localStorage.getItem("mccAdmins") || "{}");
+  const stored = localStorage.getItem("routeData");
+  routeData = stored ? JSON.parse(stored) : {};
 }
 
-// ========== SAVE TO STORAGE ==========
+// ========== Save Data ==========
 function saveRouteData() {
   localStorage.setItem("routeData", JSON.stringify(routeData));
 }
 
-// ========== DRIVER LOGIN ==========
+// ========== Driver Login ==========
 function driverLogin() {
   const route = document.getElementById("routeNumber").value.trim();
   const password = document.getElementById("password").value;
   const shift = document.getElementById("shiftSelector").value;
 
-  const routeDataString = localStorage.getItem("routeData");
-  
-  if (!routeDataString) {
-    showToast("⚠️ No route data found. Try reloading or re-initializing.", "error");
-    alert("Route data missing in localStorage!");
+  const data = JSON.parse(localStorage.getItem("routeData") || "{}");
+
+  if (!data[route]) {
+    showToast("❌ Route not found", "error");
+    alert("Route not found.");
     return;
   }
 
-  const routeData = JSON.parse(routeDataString);
-
-  if (!routeData[route]) {
-    showToast(`❌ Route ${route} not found`, "error");
-    alert("Route not found");
-    return;
-  }
-
-  if (routeData[route].password !== password) {
-    showToast("❌ Incorrect password", "error");
-    alert("Wrong password");
+  if (data[route].password !== password) {
+    showToast("❌ Wrong password", "error");
+    alert("Incorrect password.");
     return;
   }
 
@@ -78,6 +57,7 @@ function driverLogin() {
   document.getElementById("driverRoute").innerText = route;
   document.getElementById("shiftDisplay").innerText = "Shift: " + shift;
   document.getElementById("loginTime").innerText = "Login Time: " + new Date().toLocaleTimeString();
+
   document.getElementById("driverLoginSection").classList.add("hidden");
   document.getElementById("adminLoginSection").classList.add("hidden");
 
@@ -85,197 +65,170 @@ function driverLogin() {
   showToast("✅ Login successful", "info");
 }
 
-// ========== POPULATE SOCIETIES ==========
-function populateSocieties(route) {
+// ========== Show Society List ==========
+function showSocietyList(route, shift) {
   const list = document.getElementById("societyList");
   list.innerHTML = "";
 
-  routeData[route].societies.forEach((society, i) => {
-    const li = document.createElement("li");
-    li.className = "society";
-    li.innerHTML = `
-      <strong>${society}</strong><br/>
+  const routeSocieties = routeData[route].societies || [];
+  routeSocieties.forEach((name, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <strong>${name}</strong><br>
       <button onclick="markTime('${route}', ${i}, 'arrival')">Arrival</button>
       <button onclick="markTime('${route}', ${i}, 'dispatch')">Dispatch</button>
-      <div id="status-${route}-${i}" style="font-size: 12px; margin-top: 4px;"></div>
+      <div id="status-${i}"></div>
+      <hr>
     `;
-    list.appendChild(li);
-
-    updateStatus(route, i);
+    list.appendChild(div);
   });
 }
 
-// ========== MARK TIME ==========
-function markTime(route, i, type) {
-  const key = `time-${route}-${i}-${type}`;
-  const time = new Date().toLocaleTimeString();
-  localStorage.setItem(key, time);
-  updateStatus(route, i);
+// ========== Mark Arrival/Dispatch ==========
+function markTime(route, index, type) {
+  const now = new Date().toLocaleTimeString();
+  const id = `status-${index}`;
+  const status = document.getElementById(id);
+
+  status.innerHTML += `${type === "arrival" ? "🟢 Arrived" : "🔵 Dispatched"} at ${now}<br>`;
 }
 
-function updateStatus(route, i) {
-  const arrival = localStorage.getItem(`time-${route}-${i}-arrival`);
-  const dispatch = localStorage.getItem(`time-${route}-${i}-dispatch`);
-  let html = "";
-  if (arrival) html += `🟢 Arrival: ${arrival}<br/>`;
-  if (dispatch) html += `🔵 Dispatch: ${dispatch}`;
-  document.getElementById(`status-${route}-${i}`).innerHTML = html;
-}
-
-// ========== ADMIN LOGIN ==========
+// ========== Admin Login ==========
 function adminLogin() {
-  const name = document.getElementById("mccName").value.trim();
-  const password = document.getElementById("mccPassword").value.trim();
+  const username = document.getElementById("adminUsername").value.trim();
+  const password = document.getElementById("adminPassword").value;
 
-  if (!name || !password) return showToast("Please fill all fields", "error");
+  const mccAdmins = JSON.parse(localStorage.getItem("mccAdmins") || "{}");
 
-  if (!mccAdmins[name] || mccAdmins[name].password !== password) {
-    return showToast("Invalid MCC name or password", "error");
+  if (mccAdmins[username] === password) {
+    document.querySelector(".admin-section").classList.remove("hidden");
+    document.getElementById("adminLoginSection").classList.add("hidden");
+    showToast("✅ Admin login success", "info");
+    updateRouteDropdown();
+  } else {
+    showToast("❌ Invalid admin credentials", "error");
   }
-
-  // Success
-  document.getElementById("adminLoginSection").style.display = "none";
-  document.querySelector(".admin-section").style.display = "block";
-  updateRouteDropdown(name);
 }
 
-// ========== ROUTE DROPDOWN ==========
-function updateRouteDropdown(mccName) {
+// ========== Update Route Dropdown in Admin Panel ==========
+function updateRouteDropdown() {
   const dropdown = document.getElementById("routeSelector");
   dropdown.innerHTML = "";
 
-  const routes = mccAdmins[mccName].routes || [];
-
-  routes.forEach(route => {
+  Object.keys(routeData).forEach(route => {
     const option = document.createElement("option");
     option.value = route;
-    option.innerText = `Route ${route}`;
+    option.text = route;
     dropdown.appendChild(option);
   });
 
-  loadSocietiesForEdit(routes[0]);
+  loadSocietiesForEdit();
 }
 
-// ========== SOCIETY LIST FOR ADMIN ==========
-function loadSocietiesForEdit(route) {
-  const container = document.getElementById("societyListAdmin");
+// ========== Load Societies for Editing ==========
+function loadSocietiesForEdit() {
+  const route = document.getElementById("routeSelector").value;
+  const container = document.getElementById("societyEditor");
   container.innerHTML = "";
 
-  (routeData[route]?.societies || []).forEach((society, index) => {
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <input type="text" value="${society}" />
-      <button onclick="deleteSociety('${route}', ${index})">🗑</button>
-    `;
-    const input = div.querySelector("input");
-    input.addEventListener("blur", () => {
+  if (!routeData[route]) return;
+
+  routeData[route].societies.forEach((name, index) => {
+    const input = document.createElement("input");
+    input.value = name;
+    input.onblur = () => {
       routeData[route].societies[index] = input.value.trim();
       saveRouteData();
-    });
-    container.appendChild(div);
+    };
+
+    const del = document.createElement("button");
+    del.innerText = "❌";
+    del.onclick = () => {
+      routeData[route].societies.splice(index, 1);
+      saveRouteData();
+      loadSocietiesForEdit();
+    };
+
+    container.appendChild(input);
+    container.appendChild(del);
+    container.appendChild(document.createElement("br"));
   });
 }
 
-// ========== ADD SOCIETY ==========
-function addSociety() {
-  const route = document.getElementById("routeSelector").value;
-  const name = document.getElementById("newSocietyName").value.trim();
-
-  if (!name) return showToast("Enter society name", "error");
-
-  routeData[route].societies.push(name);
-  saveRouteData();
-  document.getElementById("newSocietyName").value = "";
-  loadSocietiesForEdit(route);
-  showToast("Society added", "info");
-}
-
-// ========== DELETE SOCIETY ==========
-function deleteSociety(route, index) {
-  routeData[route].societies.splice(index, 1);
-  saveRouteData();
-  loadSocietiesForEdit(route);
-  showToast("Society deleted", "info");
-}
-
-// ========== ADD ROUTE ==========
+// ========== Add New Route ==========
 function addRoute() {
   const route = document.getElementById("newRouteNumber").value.trim();
-  if (!route) return showToast("Enter route number", "error");
-  if (routeData[route]) return showToast("Route already exists", "error");
+  if (!route || routeData[route]) return showToast("❌ Invalid or duplicate route", "error");
 
-  const password = prompt("Set password for this route:");
-  if (!password) return showToast("Password required", "error");
+  const password = prompt("Set a password for this route:");
+  if (!password) return;
 
   routeData[route] = { password, societies: [] };
   saveRouteData();
-  document.getElementById("newRouteNumber").value = "";
-  showToast("Route added", "info");
+  updateRouteDropdown();
+  showToast("✅ Route added", "info");
 }
 
-// ========== LANGUAGE SWITCH ==========
-function loadLanguage() {
-  const lang = localStorage.getItem("language") || "en";
-  document.getElementById("languageToggle").value = lang;
-  applyLanguage(lang);
+// ========== Add Society to Route ==========
+function addSociety() {
+  const route = document.getElementById("routeSelector").value;
+  const name = document.getElementById("newSocietyName").value.trim();
+  if (!name) return;
+
+  routeData[route].societies.push(name);
+  saveRouteData();
+  loadSocietiesForEdit();
+  document.getElementById("newSocietyName").value = "";
+  showToast("✅ Society added", "info");
 }
 
-function switchLanguage(lang) {
-  localStorage.setItem("language", lang);
-  applyLanguage(lang);
-}
-
-function applyLanguage(lang) {
-  const text = {
+// ========== Language Toggle ==========
+let currentLang = "en";
+function toggleLanguage() {
+  const texts = {
     en: {
-      driverLogin: "Driver Login",
-      adminLogin: "Admin Login",
       route: "Route Number",
-      pass: "Password",
+      password: "Password",
+      login: "Login",
       shift: "Select Shift",
-      login: "Login"
+      morning: "Morning",
+      evening: "Evening",
+      admin: "Admin Login"
     },
     hi: {
-      driverLogin: "ड्राइवर लॉगिन",
-      adminLogin: "प्रशासक लॉगिन",
       route: "रूट नंबर",
-      pass: "पासवर्ड",
+      password: "पासवर्ड",
+      login: "लॉगिन",
       shift: "शिफ्ट चुनें",
-      login: "लॉगिन"
+      morning: "सुबह",
+      evening: "शाम",
+      admin: "प्रशासक लॉगिन"
     }
   };
 
-  const t = text[lang];
-  document.getElementById("driverLoginTitle").innerText = t.driverLogin;
-  document.getElementById("adminLoginTitle").innerText = t.adminLogin;
-  document.getElementById("routeLabel").innerText = t.route;
-  document.getElementById("passwordLabel").innerText = t.pass;
-  document.getElementById("shiftLabel").innerText = t.shift;
+  currentLang = currentLang === "en" ? "hi" : "en";
+  const t = texts[currentLang];
+  document.getElementById("labelRoute").innerText = t.route;
+  document.getElementById("labelPassword").innerText = t.password;
   document.getElementById("driverLoginButton").innerText = t.login;
-  document.getElementById("adminLoginButton").innerText = t.login;
+  document.getElementById("shiftLabel").innerText = t.shift;
+  document.getElementById("shiftSelector").options[0].text = t.morning;
+  document.getElementById("shiftSelector").options[1].text = t.evening;
+  document.getElementById("adminLoginTitle").innerText = t.admin;
 }
 
-// ========== LOGOUT ==========
-function logout() {
-  location.reload();
-}
-
-// ========== TOAST ==========
+// ========== Toast ==========
 function showToast(message, type = "info") {
   const toast = document.getElementById("toast");
+  toast.className = `toast ${type}`;
   toast.innerText = message;
-  toast.style.background = type === "error" ? "#f44336" : "#4CAF50";
-  toast.className = "toast show";
+  toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
-// ========== INIT ==========
+// ========== Start ==========
 document.addEventListener("DOMContentLoaded", () => {
   MilkRouteTracker.init();
-  loadLanguage();
-});
-document.addEventListener("DOMContentLoaded", function () {
-  MilkRouteTracker.init();
   loadRouteData();
-  loadLanguage(); // if using language switching
+  loadLanguage?.();
 });
