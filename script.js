@@ -207,43 +207,30 @@ function bulkAddRoute() {
   showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
 }
 function markStatus(societyName, type) {
-  const route = localStorage.getItem("currentRoute");
-  const shift = localStorage.getItem("currentShift") || "Unknown";
-  const date = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
-  const time = new Date().toLocaleTimeString(); // hh:mm:ss
+function markStatus(route, shift, society, type, btn) {
+  const date = new Date().toISOString().slice(0, 10); // today's date
+  const time = new Date().toLocaleTimeString();
 
-  let logs = JSON.parse(localStorage.getItem("driverStatusLog")) || [];
+  const statusKey = `status_${route}_${shift}_${date}`;
+  const savedStatus = JSON.parse(localStorage.getItem(statusKey)) || {};
 
-  // Check if there's already a log for same route, shift, date, society
-  let existing = logs.find(log =>
-    log.route === route &&
-    log.shift === shift &&
-    log.date === date &&
-    log.society === societyName
-  );
-
-  if (!existing) {
-    // Create new entry
-    existing = {
-      route,
-      shift,
-      date,
-      society: societyName,
-      arrivalTime: "",
-      departureTime: ""
-    };
-    logs.push(existing);
+  if (!savedStatus[society]) {
+    savedStatus[society] = {};
   }
 
-  // Update arrival or departure time
-  if (type === "arrival") existing.arrivalTime = time;
-  if (type === "departure") existing.departureTime = time;
+  savedStatus[society][type] = time;
 
-  // Save back
-  localStorage.setItem("driverStatusLog", JSON.stringify(logs));
+  localStorage.setItem(statusKey, JSON.stringify(savedStatus));
 
-  showToast(`✅ ${type} marked for ${societyName}`, false);
-  renderDriverView(); // to update buttons
+  const span = document.getElementById(`status_${route}_${shift}_${society.replace(/\s+/g, '_')}`);
+  span.innerText = "";
+
+  if (savedStatus[society].arrival) {
+    span.innerText += `🟢 Arrived at ${savedStatus[society].arrival} `;
+  }
+  if (savedStatus[society].departure) {
+    span.innerText += `🔴 Departed at ${savedStatus[society].departure}`;
+  }
 }
 function showAdminStatus(routeNumber) {
   const data = JSON.parse(localStorage.getItem("routeData")) || {};
@@ -274,6 +261,82 @@ function showAdminStatus(routeNumber) {
   html += `</table>`;
   document.getElementById("adminStatusView").innerHTML = html;
 }
+function populateFilterRoutes() {
+  const routeDropdown = document.getElementById("filterRoute");
+  routeDropdown.innerHTML = `<option value="">All Routes</option>`; // Reset
+
+  const data = JSON.parse(localStorage.getItem("routeData")) || {};
+
+  Object.keys(data).forEach(route => {
+    const option = document.createElement("option");
+    option.value = route;
+    option.textContent = route;
+    routeDropdown.appendChild(option);
+  });
+}
+function applyAdminFilters() {
+  const date = document.getElementById("filterDate").value;
+  const route = document.getElementById("filterRoute").value;
+  const shift = document.getElementById("filterShift").value;
+
+  const tableDiv = document.getElementById("adminStatusTable");
+  tableDiv.innerHTML = "";
+
+  if (!date) {
+    showToast("Please select a date first", true);
+    return;
+  }
+
+  let html = `<table border="1" cellspacing="0" cellpadding="5">
+    <tr>
+      <th>#</th>
+      <th>Route</th>
+      <th>Shift</th>
+      <th>Society</th>
+      <th>Arrival</th>
+      <th>Departure</th>
+    </tr>`;
+
+  let count = 0;
+
+  const routeData = JSON.parse(localStorage.getItem("routeData")) || {};
+
+  Object.keys(routeData).forEach(routeKey => {
+    if (route && route !== routeKey) return;
+
+    ["Morning", "Evening"].forEach(shiftType => {
+      if (shift && shift !== shiftType) return;
+
+      const statusKey = `status_${routeKey}_${shiftType}_${date}`;
+      const statusObj = JSON.parse(localStorage.getItem(statusKey)) || {};
+
+      Object.keys(statusObj).forEach(society => {
+        const status = statusObj[society];
+        if (status.arrival || status.departure) {
+          count++;
+          html += `
+            <tr>
+              <td>${count}</td>
+              <td>${routeKey}</td>
+              <td>${shiftType}</td>
+              <td>${society}</td>
+              <td>${status.arrival || ""}</td>
+              <td>${status.departure || ""}</td>
+            </tr>
+          `;
+        }
+      });
+    });
+  });
+
+  html += "</table>";
+
+  if (count === 0) {
+    tableDiv.innerHTML = "⚠️ No records found for the selected filters.";
+  } else {
+    tableDiv.innerHTML = html;
+  }
+}
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
   const toast = document.getElementById("toast");
@@ -281,3 +344,7 @@ function showToast(msg, isError = false) {
   toast.className = "toast show " + (isError ? "error" : "info");
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
+window.onload = function () {
+  populateFilterRoutes();
+  // (add any other setup functions here)
+};
