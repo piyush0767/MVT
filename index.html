@@ -1,82 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Milk Van Tracking</title>
+  <meta charset="UTF-8">
+  <title>Milk Route Tracker</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
+    body { font-family: Arial; padding: 1rem; }
     .hidden { display: none; }
     .toast {
-      position: fixed; top: 10px; right: 10px;
-      background: #444; color: #fff; padding: 10px;
-      border-radius: 5px; z-index: 9999;
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      z-index: 1000;
     }
+    .toast.show { opacity: 1; }
+    .toast.error { background: red; }
+    .toast.info { background: green; }
   </style>
 </head>
 <body>
-  <h1 style="text-align: center;">🥛 Milk Van Tracking</h1>
 
-  <div style="text-align: center;">
-    <button id="languageSelect" onclick="toggleLanguage()">🌐 Switch Language</button>
-  </div>
+  <!-- 🌐 Language Toggle -->
+  <button onclick="toggleLanguage()">🌐 Toggle Language</button>
 
-  <!-- 🔹 Driver Login Section -->
+  <!-- 🚚 Driver Login -->
   <div id="driverLoginSection">
-    <h2 id="loginTitle">Driver Login</h2>
+    <h2>Driver Login</h2>
     <label id="labelRoute">Route Number</label><br>
-    <input type="text" id="routeNumber" placeholder="Enter Route Number" /><br><br>
+    <input id="routeNumber"><br>
 
     <label id="labelPassword">Password</label><br>
-    <input type="password" id="password" placeholder="Enter Password" /><br><br>
+    <input type="password" id="password"><br>
 
     <label id="shiftLabel">Select Shift</label><br>
     <select id="shiftSelector">
-      <option value="Morning">Morning</option>
-      <option value="Evening">Evening</option>
-      <option value="Night">Night</option>
+      <option>Morning</option>
+      <option>Evening</option>
     </select><br><br>
 
     <button id="driverLoginButton" onclick="driverLogin()">Login</button>
   </div>
 
-  <!-- 🔹 Driver Panel -->
+  <!-- 👤 Admin Login -->
+  <div id="adminLoginSection">
+    <h2 id="adminLoginTitle">Admin Login</h2>
+    <input id="adminUsername" placeholder="Username"><br>
+    <input type="password" id="adminPassword" placeholder="Password"><br>
+    <button onclick="adminLogin()">Login as Admin</button>
+  </div>
+
+  <!-- ✅ Driver Section After Login -->
   <div class="driver-section hidden">
-    <h2>Driver Panel</h2>
-    <p><strong>Route:</strong> <span id="driverRoute"></span></p>
-    <p><span id="shiftDisplay"></span></p>
-    <p><span id="loginTime"></span></p>
+    <h3>Welcome, Driver!</h3>
+    <p id="driverRoute"></p>
+    <p id="shiftDisplay"></p>
+    <p id="loginTime"></p>
     <div id="societyList"></div>
   </div>
 
-  <!-- 🔹 Admin Login Section -->
-  <div id="adminLoginSection" style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 20px;">
-  <h2 id="adminLoginTitle">Admin Login</h2>
-
-  <input type="text" id="adminUsername" placeholder="Enter Admin Username" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
-  <input type="password" id="adminPassword" placeholder="Enter Password" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
-
-  <button onclick="adminLogin()" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; font-size: 1em;">
-    Login as Admin
-  </button>
-</div>
-
-  <!-- 🔹 Admin Panel -->
+  <!-- 🛠️ Admin Panel -->
   <div class="admin-section hidden">
     <h2>Admin Panel</h2>
+    <label>Select Route:</label><br>
     <select id="routeSelector" onchange="loadSocietiesForEdit()"></select><br><br>
 
     <div id="societyEditor"></div><br>
-    <input type="text" id="newSocietyName" placeholder="New Society Name" />
+
+    <input id="newSocietyName" placeholder="New Society Name">
     <button onclick="addSociety()">Add Society</button><br><br>
 
-    <input type="text" id="newRouteNumber" placeholder="New Route Number" />
+    <input id="newRouteNumber" placeholder="New Route Number">
     <button onclick="addRoute()">Add Route</button>
   </div>
 
-  <div id="toast" class="toast" style="display: none;"></div>
+  <!-- 🔔 Toast Notification -->
+  <div id="toast" class="toast"></div>
 
-  <!-- ✅ Link JavaScript -->
-  <script src="script.js" defer></script>
+  <!-- ✅ Link JS -->
+  <script src="script.js"></script>
 </body>
 </html>
