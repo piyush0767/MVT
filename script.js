@@ -1,1245 +1,258 @@
-// ========== DATA INITIALIZATION ==========
+// ========== GLOBAL DATA ==========
+let routeData = {}; // Holds all route + society + password info
+let mccAdmins = {}; // Holds MCC admin info
 
+// ========== INIT LOGIC ==========
 const MilkRouteTracker = {
-
-  // Initialize sample data if not exists
-
-  init: function() {
-
+  init: function () {
     if (!localStorage.getItem("initialized")) {
+      // Sample Route Data
+      routeData = {
+        "1801": {
+          password: "Milk1801",
+          societies: ["Green Park", "Sunrise Nagar", "Shanti Vihar"]
+        },
+        "1802": {
+          password: "Milk1802",
+          societies: ["Radha Colony", "Laxmi Enclave"]
+        }
+      };
 
-      localStorage.setItem("routeData", JSON.stringify(this.routeData));
+      // Sample MCC Admins
+      mccAdmins = {
+        Khushipur: { password: "MCC123", routes: ["1801"] },
+        Devipur: { password: "MCC456", routes: ["1802"] }
+      };
 
-      localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
-
+      localStorage.setItem("routeData", JSON.stringify(routeData));
+      localStorage.setItem("mccAdmins", JSON.stringify(mccAdmins));
       localStorage.setItem("initialized", "yes");
-
-      this.showToast("✅ Sample data loaded! Try logging in now.", "info");
-
+      showToast("✅ Sample data loaded!");
     } else {
-
-      // Load existing data
-
-      const storedRoutes = localStorage.getItem("routeData");
-
-      if (storedRoutes) this.routeData = JSON.parse(storedRoutes);
-
-     
-
-      const storedAdmins = localStorage.getItem("mccAdmins");
-      if (storedAdmins) this.mccAdmins = JSON.parse(storedAdmins);
+      loadRouteData();
     }
-  },
-  // MCC Admin data
-  mccAdmins: {
-    "Khushipur": {
-      password: "Khushi123",
-      routes: ["1801", "1802", "1803", "1805", "1808", "1809", "1810", "1811",
-              "1812", "1813", "1814", "1815", "1816", "1817", "1818", "1819",
-              "1820", "1821", "1822", "1823", "1824", "1825", "1826", "1827",
-              "1828", "1830", "1831", "1834"]
-
-    },
-    "Shivpur": {
-      password: "admin456",
-      routes: ["1805", "1808", "1809"]
-    }
-  },
-  // Complete Route Data
-  routeData: {
-    "1801": {
-    password: "Milk1801",
-    societies: [
-      "CHADIYA D.U. ASSOCIATION",
-      "SHIKHADI D.U. ASSOCIATION",
-      "ASHOGAPUR D.U. ASSOCIATION",
-      "BHOR KALA D U ASSOCIATION",
-      "KALYANPUR D U ASSOCIATION",
-      "DOMANPUR D.U. ASSOCIATION",
-      "MAI HARDOPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1802": {
-    password: "Milk1802",
-    societies: [
-      "DUBANI D.U. ASSOCIATION",
-      "LAPSEE D.U. ASSOCIATION",
-      "PIPARADAN D.U. ASSOCIATION",
-      "MEWALI D.U. ASSOCIATION",
-      "JIGNAUDEE D U ASSOCIATION",
-      "BAISUKHIYA D.U. ASSOCIATION",
-      "KOLHAN D.U. ASSOCIATION"
-    ]
-  },
-  "1803": {
-    password: "Milk1803",
-    societies: [
-      "PREMAAPUR D.U. ASSOCIATION",
-      "NAYAPURA HASINPUR D.U. ASSOCIATION",
-      "HASINPUR D.U. ASSOCIATION",
-      "RAMHADH KALAN D.U. ASSOCIATION",
-      "SEEKHAD D.U. ASSOCIATION"
-    ]
-  },
-  "1805": {
-    password: "Milk1805",
-    societies: [
-      "MATIYARI D U ASSOCIATION",
-      "MUKTAPOUR D.U. ASSOCIATION",
-      "BHARATPUR D.U. ASSOCIATION",
-      "JADDUPUR D.U. ASSOCIATION",
-      "SONBARSA D.U. ASSOCIATION",
-      "UPRAUTH D.U. ASSOCIATION",
-      "UCHETHA D.U. ASSOCIATION"
-    ]
-  },
-  "1808": {
-    password: "Milk1808",
-    societies: [
-      "JALALPUR D.U. ASSOCIATION",
-      "BAJHA D.U. ASSOCIATION",
-      "SEMARI D.U. ASSOCIATION",
-      "MARUI D.U. ASSOCIATION",
-      "MAHAMALPUR D U ASSOCIATION",
-      "GAHARWARI D.U. ASSOCIATION",
-      "BADHAINI D.U. ASSOCIATION"
-    ]
-  },
-  "1809": {
-    password: "Milk1809",
-    societies: [
-      "HARDARA D.U. ASSOCIATION",
-      "MITAEE D.U. ASSOCIATION",
-      "DILMAN DEVRIYA D U ASSOCIATION",
-      "TILANGA  D.U. ASSOCIATION",
-      "KHUTAHA  D.U. ASSOCIATION",
-      "SINHAR KALA D.U. ASSOCIATION"
-    ]
-  },
-  "1810": {
-    password: "Milk1810",
-    societies: [
-      "KARDHANA D.U. ASSOCIATION",
-      "MILKI CHAK D.U. ASSOCIATION",
-      "BARKI D.U. ASSOCIATION",
-      "ADAMAPUR MAHANAG D.U. ASSOCIATION",
-      "TATEHARA D.U. ASSOCIATION",
-      "KALLIPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1811": {
-    password: "Milk1811",
-    societies: [
-      "BAGAHI D.U. ASSOCIATION",
-      "SAHASPURA D.U. ASSOCIATION",
-      "JALALPUR MAFI D U ASSOCIATION",
-      "BAGHEDA D U ASSOCIATION",
-      "NAKAHARA  D.U. ASSOCIATION",
-      "BELA D.U. ASSOCIATION"
-    ]
-  },
-  "1812": {
-    password: "Milk1812",
-    societies: [
-      "JHAUWA D.U. ASSOCIATION",
-      "SARWARKHANI D.U. ASSOCIATION",
-      "RAMAIPUR  D U ASSOCIATION",
-      "PALLAHIYA D.U. ASSOCIATION",
-      "AUSANPUR D.U. ASSOCIATION",
-      "LATHAYA D.U. ASSOCIATION",
-      "SAUPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1813": {
-    password: "Milk1813",
-    societies: [
-      "VISHWANATHPUR D.U. ASSOCIATION",
-      "TIKAPUR D.U. ASSOCIATION",
-      "MADHOPUR D.U. ASSOCIATION",
-      "BADAULI D.U. ASSOCIATION",
-      "LACHHA PATTI D.U. ASSOCIATION",
-      "BELVARIYA D.U. ASSOCIATION"
-    ]
-  },
-  "1814": {
-    password: "Milk1814",
-    societies: [
-      "BARAINI D.U. ASSOCIATION",
-      "KEVATAVEER D.U. ASSOCIATION",
-      "BARAINEE 2 D.U. ASSOCIATION",
-      "BANAPUR D.U. ASSOCIATION",
-      "MAJHAWA D.U. ASSOCIATION",
-      "PUREY GAUN D U ASSOCIATION",
-      "GADHAULI D U ASSOCIATION"
-    ]
-  },
-  "1815": {
-    password: "Milk1815",
-    societies: [
-      "ARJUNPUR D.U. ASSOCIATION",
-      "NIVADA D.U. ASSOCIATION",
-      "KHARARIYA D.U. ASSOCIATION",
-      "BAULIYA D.U. ASSOCIATION",
-      "GADDOPUR D.U. ASSOCIATION",
-      "FATTEHPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1816": {
-    password: "Milk1816",
-    societies: [
-      "BAGHAN D.U. ASSOCIATION",
-      "NIYAMAT PUR KALA D.U. ASSOCIATION",
-      "SUJAULI D.U. ASSOCIATION"
-    ]
-  },
-  "1817": {
-    password: "Milk1817",
-    societies: [
-const routeData = {
-  "1801": {
-    password: "Milk1801",
-    societies: [
-      "CHADIYA D.U. ASSOCIATION",
-      "SHIKHADI D.U. ASSOCIATION",
-      "ASHOGAPUR D.U. ASSOCIATION",
-      "BHOR KALA D U ASSOCIATION",
-      "KALYANPUR D U ASSOCIATION",
-      "DOMANPUR D.U. ASSOCIATION",
-      "MAI HARDOPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1802": {
-    password: "Milk1802",
-    societies: [
-      "DUBANI D.U. ASSOCIATION",
-      "LAPSEE D.U. ASSOCIATION",
-      "PIPARADAN D.U. ASSOCIATION",
-      "MEWALI D.U. ASSOCIATION",
-      "JIGNAUDEE D U ASSOCIATION",
-      "BAISUKHIYA D.U. ASSOCIATION",
-      "KOLHAN D.U. ASSOCIATION"
-    ]
-  },
-  "1803": {
-    password: "Milk1803",
-    societies: [
-      "PREMAAPUR D.U. ASSOCIATION",
-      "NAYAPURA HASINPUR D.U. ASSOCIATION",
-      "HASINPUR D.U. ASSOCIATION",
-      "RAMHADH KALAN D.U. ASSOCIATION",
-      "SEEKHAD D.U. ASSOCIATION"
-    ]
-  },
-  "1805": {
-    password: "Milk1805",
-    societies: [
-      "MATIYARI D U ASSOCIATION",
-      "MUKTAPOUR D.U. ASSOCIATION",
-      "BHARATPUR D.U. ASSOCIATION",
-      "JADDUPUR D.U. ASSOCIATION",
-      "SONBARSA D.U. ASSOCIATION",
-      "UPRAUTH D.U. ASSOCIATION",
-      "UCHETHA D.U. ASSOCIATION"
-    ]
-  },
-  "1808": {
-    password: "Milk1808",
-    societies: [
-      "JALALPUR D.U. ASSOCIATION",
-      "BAJHA D.U. ASSOCIATION",
-      "SEMARI D.U. ASSOCIATION",
-      "MARUI D.U. ASSOCIATION",
-      "MAHAMALPUR D U ASSOCIATION",
-      "GAHARWARI D.U. ASSOCIATION",
-      "BADHAINI D.U. ASSOCIATION"
-    ]
-  },
-  "1809": {
-    password: "Milk1809",
-    societies: [
-      "HARDARA D.U. ASSOCIATION",
-      "MITAEE D.U. ASSOCIATION",
-      "DILMAN DEVRIYA D U ASSOCIATION",
-      "TILANGA  D.U. ASSOCIATION",
-      "KHUTAHA  D.U. ASSOCIATION",
-      "SINHAR KALA D.U. ASSOCIATION"
-    ]
-  },
-  "1810": {
-    password: "Milk1810",
-    societies: [
-      "KARDHANA D.U. ASSOCIATION",
-      "MILKI CHAK D.U. ASSOCIATION",
-      "BARKI D.U. ASSOCIATION",
-      "ADAMAPUR MAHANAG D.U. ASSOCIATION",
-      "TATEHARA D.U. ASSOCIATION",
-      "KALLIPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1811": {
-    password: "Milk1811",
-    societies: [
-      "BAGAHI D.U. ASSOCIATION",
-      "SAHASPURA D.U. ASSOCIATION",
-      "JALALPUR MAFI D U ASSOCIATION",
-      "BAGHEDA D U ASSOCIATION",
-      "NAKAHARA  D.U. ASSOCIATION",
-      "BELA D.U. ASSOCIATION"
-    ]
-  },
-  "1812": {
-    password: "Milk1812",
-    societies: [
-      "JHAUWA D.U. ASSOCIATION",
-      "SARWARKHANI D.U. ASSOCIATION",
-      "RAMAIPUR  D U ASSOCIATION",
-      "PALLAHIYA D.U. ASSOCIATION",
-      "AUSANPUR D.U. ASSOCIATION",
-      "LATHAYA D.U. ASSOCIATION",
-      "SAUPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1813": {
-    password: "Milk1813",
-    societies: [
-      "VISHWANATHPUR D.U. ASSOCIATION",
-      "TIKAPUR D.U. ASSOCIATION",
-      "MADHOPUR D.U. ASSOCIATION",
-      "BADAULI D.U. ASSOCIATION",
-      "LACHHA PATTI D.U. ASSOCIATION",
-      "BELVARIYA D.U. ASSOCIATION"
-    ]
-  },
-  "1814": {
-    password: "Milk1814",
-    societies: [
-      "BARAINI D.U. ASSOCIATION",
-      "KEVATAVEER D.U. ASSOCIATION",
-      "BARAINEE 2 D.U. ASSOCIATION",
-      "BANAPUR D.U. ASSOCIATION",
-      "MAJHAWA D.U. ASSOCIATION",
-      "PUREY GAUN D U ASSOCIATION",
-      "GADHAULI D U ASSOCIATION"
-    ]
-  },
-  "1815": {
-    password: "Milk1815",
-    societies: [
-      "ARJUNPUR D.U. ASSOCIATION",
-      "NIVADA D.U. ASSOCIATION",
-      "KHARARIYA D.U. ASSOCIATION",
-      "BAULIYA D.U. ASSOCIATION",
-      "GADDOPUR D.U. ASSOCIATION",
-      "FATTEHPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1816": {
-    password: "Milk1816",
-    societies: [
-      "BAGHAN D.U. ASSOCIATION",
-      "NIYAMAT PUR KALA D.U. ASSOCIATION",
-      "SUJAULI D.U. ASSOCIATION"
-    ]
-  },
-  "1817": {
-    password: "Milk1817",
-    societies: [
-      "KOLANA D.U. ASSOCIATION",
-      "PAHARI D.U. ASSOCIATION",
-      "RUPAUDHA D.U. ASSOCIATION",
-      "RAMPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1818": {
-    password: "Milk1818",
-    societies: [
-      "JAMUI D.U. ASSOCIATION",
-      "BHOJPUR PAHADI D.U. ASSOCIATION",
-      "PARSANPUR D.U. ASSOCIATION",
-      "AAMGHAT D.U. ASSOCIATION",
-      "CHAPGHNA D.U. ASSOCIATION",
-      "KAMHARI D.U. ASSOCIATION",
-      "TIGODA D.U. ASSOCIATION"
-    ]
-  },
-  "1819": {
-    password: "Milk1819",
-    societies: [
-      "NAUDIHAWA D.U. ASSOCIATION",
-      "PAHARIPAR D.U. ASSOCIATION",
-      "UKHDAND D.U. ASSOCIATION",
-      "GAHIRA D.U. ASSOCIATION",
-      "UMARIYA D.U. ASSOCIATION",
-      "NAUGADAWAN D.U. ASSOCIATION",
-      "BIROHIYA D.U. ASSOCIATION",
-      "GAURA D.U. ASSOCIATION"
-    ]
-  },
-  "1820": {
-    password: "Milk1820",
-    societies: [
-      "KACHARIYAN D.U. ASSOCIATION",
-      "KHAJURI D.U. ASSOCIATION",
-      "VEHADA D.U. ASSOCIATION",
-      "MAHGAON D.U. ASSOCIATION",
-      "VIKRAMPUR KALA D.U. ASSOCIATION",
-      "SAREEPUR D.U. ASSOCIATION",
-      "THEGEEPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1821": {
-    password: "Milk1821",
-    societies: [
-      "DEWAHI D.U. ASSOCIATION",
-      "NEVADHIYA D.U. ASSOCIATION",
-      "KANAURAGHAT D.U. ASSOCIATION",
-      "SARAIYA PATTI D.U. ASSOCIATION",
-      "BELWAN D.U. ASSOCIATION",
-      "MISHRAKAPURA D.U. ASSOCIATION"
-    ]
-  },
-  "1822": {
-    password: "Milk1822",
-    societies: [
-      "MUGWAR D.U. ASSOCIATION",
-      "JYA PUR D.U. ASSOCIATION",
-      "BAHADURPUR D.U. ASSOCIATION",
-      "KUWAKALA D.U. ASSOCIATION",
-      "NUNAUTEE D.U. ASSOCIATION",
-      "KUSAMI D.U. ASSOCIATION",
-      "TENDUA KALA D.U. ASSOCIATION",
-      "BARAGAWAN D.U. ASSOCIATION",
-      "DHADHORPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1823": {
-    password: "Milk1823",
-    societies: [
-      "GAHIYA D.U. ASSOCIATION",
-      "SAGARPUR D.U. ASSOCIATION",
-      "KAMASIN D.U. ASSOCIATION",
-      "MAWAIYA D.U. ASSOCIATION",
-      "MUZAHRA KHURD D.U. ASSOCIATION",
-      "MUJEHARA KALA  D.U. ASSOCIATION",
-      "BALLIPARWA D.U. ASSOCIATION"
-    ]
-  },
-  "1824": {
-    password: "Milk1824",
-    societies: [
-      "DILAWALPUR D.U. ASSOSIATION",
-      "JAGAPATTI D.U. ASSOCIATION",
-      "BAIRWAN D.U. ASSOCIATION",
-      "PEDUKA D.U. ASSOCIATION",
-      "KURSATO D.U. ASSOCIATION",
-      "BESAHUPUR D.U. ASSOCIATION",
-      "GHATMPUR D.U. ASSOCIATION",
-      "KANERI D.U. ASSOCIATION"
-    ]
-  },
-  "1825": {
-    password: "Milk1825",
-    societies: [
-      "MAJHLI PATTI D.U. ASSOCIATION",
-      "CHINDILIKH D.U. ASSOCIATION",
-      "LAKHANPUR D.U. ASSOCIATION",
-      "DERWA D.U. ASSOCIATION",
-      "DHAURAHARA D.U. ASSOCIATION",
-      "MALLEPUR D.U. ASSOCIATION",
-      "BARJI KALA D.U. ASSOCIATION",
-      "MADAN PATTI D.U. ASSOCIATION"
-    ]
-  },
-  "1826": {
-    password: "Milk1826",
-    societies: [
-      "MEDIA D.U. ASSOCIATION",
-      "KARSANA D.U. ASSOCIATION",
-      "SHAHENSHAH PUR D.U. ASSOCIATION",
-      "TIKARI D.U. ASSOCIATION",
-      "USMANPURA D.U. ASSOCIATION",
-      "ADHALPURA D.U. ASSOCIATION",
-      "JAGARDEVPUR D.U. ASSOCIATION",
-      "KURAHUAN D.U. ASSOCIATION",
-      "BANDEPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1827": {
-    password: "Milk1827",
-    societies: [
-      "LACHIRAMPUR D.U. ASSOCIATION",
-      "NAHVANIPUR D.U. ASSOCIATION",
-      "NARASADA D.U. ASSOCIATION",
-      "BENIPUR  D.U. ASSOCIATION",
-      "DILAWELPUR 2 D.U. ASSOCIATION",
-      "CHHOTI KHAJURI D.U. ASSOCIATION",
-      "SAKALPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1828": {
-    password: "Milk1828",
-    societies: [
-      "RAKHI NEWADA D.U. ASSOCIATION",
-      "KOILAR D.U. ASSOCIATION",
-      "KHAMAUNA D.U. ASSOCIATION",
-      "BALRAMPUR D.U. ASSOCIATION",
-      "KUNDI D.U. ASSOCIATION",
-      "BALUA D.U. ASSOCIATION",
-      "HARSOS D.U. ASSOCIATION"
-    ]
-  },
-  "1830": {
-    password: "Milk1830",
-    societies: [
-      "KORRI D.U. ASSOCIATION",
-      "BANAULI D.U. ASSOCIATION",
-      "RUPAPUR D.U. ASSOCIATION",
-      "GEGARAV D U ASSOCIATION",
-      "KARENUA D.U. ASSOCIATION",
-      "BHOGAON D.U. ASSOCIATION",
-      "THATHRA D.U. ASSOCIATION",
-      "SAHASEPUR D.U. ASSOCIATION"
-    ]
-  },
-  "1831": {
-    password: "Milk1831",
-    societies: [
-      "JOSRA D U ASSOCIATION",
-      "CHAPAUR KALA D.U. ASSOCIATION",
-      "JIUTEE D.U. ASSOCIATION",
-      "PATTI KA PURA D.U. ASSOCIATION",
-      "JAMAURI D.U. ASSOCIATION"
-    ]
-  },
-  "1834": {
-    password: "Milk1834",
-    societies: [
-      "JAKHINI D.U. ASSOCIATION",
-      "KANDAWA D.U. ASSOCIATION",
-      "BAIRAMPUR D.U. ASSOCIATION",
-      "CHAUKIYA D.U. ASSOCIATION",
-      "RAMPUR DABAHI D.U. ASSOCIATION",
-      "SARIYA PASCHIMI D.U. ASSOCIATION"
-    ]
   }
 };
-    // Current session data
 
-  currentSession: {
-
-    mccName: "",
-
-    driverRoute: "",
-
-    shift: "",
-
-    societies: {}
-
-  },
-
-
-
-  // ========== CORE FUNCTIONS ==========
-
-  saveData: function() {
-
-    localStorage.setItem("routeData", JSON.stringify(this.routeData));
-
-    localStorage.setItem("mccAdmins", JSON.stringify(this.mccAdmins));
-
-  },
-
-
-
-  // Enhanced Driver Login Function
-
-  driverLogin: function() {
-
-    console.log("Driver login function called");
-
-    
-
-    // Get input values
-
-    const route = document.getElementById("routeNumber")?.value?.trim();
-
-    const password = document.getElementById("password")?.value;
-
-    const shift = document.getElementById("shiftSelector")?.value;
-
-
-
-    console.log("Route:", route, "Password:", password, "Shift:", shift);
-
-
-
-    // Validate inputs
-
-    if (!route || !password || !shift) {
-
-      this.showToast("Please fill all fields", "error");
-
-      return false;
-
-    }
-
-
-
-    // Check credentials
-
-    if (!this.routeData[route] || this.routeData[route].password !== password) {
-
-      this.showToast("Invalid Route No or Password", "error");
-
-      return false;
-
-    }
-
-
-
-    // Start session
-
-    this.currentSession = {
-
-      driverRoute: route,
-
-      shift: shift,
-
-      loginTime: new Date().toISOString(),
-
-      societies: {}
-
-    };
-
-
-
-    // Update UI
-
-    this.showDriverDashboard(route, shift);
-
-    this.renderSocietyList(route);
-
-    return true;
-
-  },
-
-
-
-  // MCC Admin login function
-
-  mccAdminLogin: function() {
-
-    console.log("MCC Admin login function called");
-
-    
-
-    const mccName = document.getElementById("mccName")?.value?.trim();
-
-    const mccPassword = document.getElementById("mccPassword")?.value;
-
-
-
-    console.log("MCC Name:", mccName, "Password:", mccPassword);
-
-
-
-    // Validate inputs
-
-    if (!mccName || !mccPassword) {
-
-      this.showToast("Please fill all fields", "error");
-
-      return false;
-
-    }
-
-
-
-    if (this.mccAdmins[mccName] && this.mccAdmins[mccName].password === mccPassword) {
-
-      this.currentSession.mccName = mccName;
-
-      
-
-      // Update UI
-
-      document.getElementById("driverLoginSection")?.classList.add("hidden");
-
-      document.getElementById("adminLoginSection")?.classList.add("hidden");
-
-      document.querySelector(".admin-section")?.classList.remove("hidden");
-
-      
-
-      const adminRouteElement = document.getElementById("adminRoute");
-
-      if (adminRouteElement) adminRouteElement.textContent = mccName;
-
-
-
-      this.renderAdminRoutes(mccName);
-
-      this.populateRouteDropdown();
-
-      return true;
-
-    } else {
-
-      this.showToast("Invalid MCC Name or Password", "error");
-
-      return false;
-
-    }
-
-  },
-
-
-
-  // Show driver dashboard
-
-  showDriverDashboard: function(route, shift) {
-
-    // Hide login sections
-
-    document.getElementById("driverLoginSection")?.classList.add("hidden");
-
-    document.getElementById("adminLoginSection")?.classList.add("hidden");
-
-    
-
-    // Show driver section
-
-    const driverSection = document.querySelector(".driver-section");
-
-    if (driverSection) driverSection.classList.remove("hidden");
-
-    
-
-    // Update display elements
-
-    const driverRouteElement = document.getElementById("driverRoute");
-
-    const shiftDisplayElement = document.getElementById("shiftDisplay");
-
-    const loginTimeElement = document.getElementById("loginTime");
-
-    
-
-    if (driverRouteElement) driverRouteElement.textContent = route;
-
-    if (shiftDisplayElement) shiftDisplayElement.textContent = `Shift: ${shift}`;
-
-    if (loginTimeElement) loginTimeElement.textContent = `Login: ${new Date().toLocaleTimeString()}`;
-
-  },
-
-
-
-  // Render society list with tracking
-
-  renderSocietyList: function(route) {
-
-    const societyList = document.getElementById("societyList");
-
-    if (!societyList) return;
-
-    
-
-    societyList.innerHTML = "";
-
-
-
-    if (!this.routeData[route] || !this.routeData[route].societies) {
-
-      societyList.innerHTML = "<p>No societies found for this route.</p>";
-
-      return;
-
-    }
-
-
-
-    this.routeData[route].societies.forEach((society, index) => {
-
-      const societyItem = document.createElement("div");
-
-      societyItem.className = "society-item";
-
-      societyItem.innerHTML = `
-
-        <div class="society-info">
-
-          <span class="society-name">${index + 1}. ${society}</span>
-
-          <div class="time-display">
-
-            <span class="arrival-time hidden">Arrived: --:--</span>
-
-            <span class="dispatch-time hidden">Dispatched: --:--</span>
-
-          </div>
-
-        </div>
-
-        <div class="society-actions">
-
-          <button class="arrival-btn" data-id="${index}">
-
-            <span class="icon">✅</span>
-
-            <span class="text">Arrived</span>
-
-          </button>
-
-          <button class="dispatch-btn" data-id="${index}">
-
-            <span class="icon">📤</span>
-
-            <span class="text">Dispatch</span>
-
-          </button>
-
-        </div>
-
-      `;
-
-      societyList.appendChild(societyItem);
-
-    });
-
-
-
-    // Add event listeners
-
-    this.setupSocietyButtons();
-
-  },
-
-
-
-  // Setup button handlers
-
-  setupSocietyButtons: function() {
-
-    const handleAction = (e, actionType) => {
-
-      e.preventDefault();
-
-      const button = e.currentTarget;
-
-      const societyIndex = button.getAttribute("data-id");
-
-      const time = new Date().toLocaleTimeString();
-
-      
-
-      // Update UI
-
-      button.classList.add("active");
-
-      const timeDisplay = button.closest(".society-item").querySelector(`.${actionType}-time`);
-
-      if (timeDisplay) {
-
-        timeDisplay.textContent = `${actionType === "arrival" ? "Arrived" : "Dispatched"}: ${time}`;
-
-        timeDisplay.classList.remove("hidden");
-
-      }
-
-      
-
-      // Store in session
-
-      if (!this.currentSession.societies[societyIndex]) {
-
-        this.currentSession.societies[societyIndex] = {};
-
-      }
-
-      this.currentSession.societies[societyIndex][actionType] = time;
-
-      
-
-      this.showToast(`${actionType === "arrival" ? "Arrival" : "Dispatch"} recorded at ${time}`, "info");
-
-    };
-
-
-
-    // Arrival buttons
-
-    document.querySelectorAll(".arrival-btn").forEach(btn => {
-
-      btn.addEventListener("click", (e) => handleAction(e, "arrival"));
-
-    });
-
-
-
-    // Dispatch buttons
-
-    document.querySelectorAll(".dispatch-btn").forEach(btn => {
-
-      btn.addEventListener("click", (e) => handleAction(e, "dispatch"));
-
-    });
-
-  },
-
-
-
-  // Show toast notification
-
-  showToast: function(message, type = "info") {
-
-    const toast = document.getElementById("toast");
-
-    if (!toast) {
-
-      alert(message);
-
-      return;
-
-    }
-
-    
-
-    toast.textContent = message;
-
-    toast.className = `toast ${type} show`;
-
-    
-
-    setTimeout(() => {
-
-      toast.classList.remove("show");
-
-    }, 3000);
-
-  },
-
-
-
-  // ========== ADMIN FUNCTIONS ==========
-
-  renderAdminRoutes: function(mccName) {
-
-    const routeContainer = document.getElementById("routeData");
-
-    if (!routeContainer) return;
-
-    
-
-    routeContainer.innerHTML = "";
-
-
-
-    const adminRoutes = this.mccAdmins[mccName]?.routes || [];
-
-    
-
-    adminRoutes.forEach(route => {
-
-      const routeBlock = document.createElement("div");
-
-      routeBlock.className = "route-block";
-
-      routeBlock.innerHTML = `<h3>Route ${route}</h3>`;
-
-
-
-      const societies = this.routeData[route]?.societies || [];
-
-      if (societies.length === 0) {
-
-        routeBlock.innerHTML += "<p>No societies found.</p>";
-
-      } else {
-
-        const list = document.createElement("ul");
-
-        societies.forEach(society => {
-
-          const item = document.createElement("li");
-
-          item.textContent = society;
-
-          list.appendChild(item);
-
-        });
-
-        routeBlock.appendChild(list);
-
-      }
-
-
-
-      routeContainer.appendChild(routeBlock);
-
-    });
-
-  },
-
-
-
-  populateRouteDropdown: function() {
-
-    const dropdown = document.getElementById("routeSelectToEdit");
-
-    if (!dropdown) return;
-
-    
-
-    dropdown.innerHTML = '<option value="">Select Route to Edit</option>';
-
-    
-
-    for (const route in this.routeData) {
-
-      const option = document.createElement("option");
-
-      option.value = route;
-
-      option.textContent = route;
-
-      dropdown.appendChild(option);
-
-    }
-
-  },
-
-
-
-  // ========== INITIALIZATION ==========
-
-  setupEventListeners: function() {
-
-    console.log("Setting up event listeners");
-
-    
-
-    // Driver login form
-
-    const driverForm = document.getElementById("driverLoginForm");
-
-    if (driverForm) {
-
-      driverForm.addEventListener("submit", (e) => {
-
-        e.preventDefault();
-
-        console.log("Driver form submitted");
-
-        this.driverLogin();
-
-      });
-
-    }
-
-
-
-    // Admin login form
-
-    const adminForm = document.getElementById("adminLoginForm");
-
-    if (adminForm) {
-
-      adminForm.addEventListener("submit", (e) => {
-
-        e.preventDefault();
-
-        console.log("Admin form submitted");
-
-        this.mccAdminLogin();
-
-      });
-
-    }
-
-
-
-    // Language selector (if you want to implement it later)
-
-    const languageSelect = document.getElementById("languageSelect");
-
-    if (languageSelect) {
-
-      languageSelect.addEventListener("change", (e) => {
-
-        // Implement language change functionality here
-
-        console.log("Language changed to:", e.target.value);
-
-      });
-
-    }
-
+// ========== LOAD FROM STORAGE ==========
+function loadRouteData() {
+  routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  mccAdmins = JSON.parse(localStorage.getItem("mccAdmins") || "{}");
+}
+
+// ========== SAVE TO STORAGE ==========
+function saveRouteData() {
+  localStorage.setItem("routeData", JSON.stringify(routeData));
+}
+
+// ========== DRIVER LOGIN ==========
+function driverLogin() {
+  const route = document.getElementById("routeNumber").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const shift = document.getElementById("shiftSelector").value;
+
+  if (!route || !password || !shift) return showToast("Please fill all fields", "error");
+
+  if (!routeData[route] || routeData[route].password !== password) {
+    return showToast("Invalid route number or password", "error");
   }
 
-};
+  // Success
+  document.getElementById("driverLoginSection").style.display = "none";
+  document.querySelector(".driver-section").style.display = "block";
+  document.getElementById("routeHeader").innerText = route;
+  document.getElementById("shiftHeader").innerText = shift;
+  document.getElementById("timeHeader").innerText = new Date().toLocaleTimeString();
 
+  populateSocieties(route);
+}
 
+// ========== POPULATE SOCIETIES ==========
+function populateSocieties(route) {
+  const list = document.getElementById("societyList");
+  list.innerHTML = "";
 
-// Global functions for admin panel (called from HTML onclick)
+  routeData[route].societies.forEach((society, i) => {
+    const li = document.createElement("li");
+    li.className = "society";
+    li.innerHTML = `
+      <strong>${society}</strong><br/>
+      <button onclick="markTime('${route}', ${i}, 'arrival')">Arrival</button>
+      <button onclick="markTime('${route}', ${i}, 'dispatch')">Dispatch</button>
+      <div id="status-${route}-${i}" style="font-size: 12px; margin-top: 4px;"></div>
+    `;
+    list.appendChild(li);
 
+    updateStatus(route, i);
+  });
+}
+
+// ========== MARK TIME ==========
+function markTime(route, i, type) {
+  const key = `time-${route}-${i}-${type}`;
+  const time = new Date().toLocaleTimeString();
+  localStorage.setItem(key, time);
+  updateStatus(route, i);
+}
+
+function updateStatus(route, i) {
+  const arrival = localStorage.getItem(`time-${route}-${i}-arrival`);
+  const dispatch = localStorage.getItem(`time-${route}-${i}-dispatch`);
+  let html = "";
+  if (arrival) html += `🟢 Arrival: ${arrival}<br/>`;
+  if (dispatch) html += `🔵 Dispatch: ${dispatch}`;
+  document.getElementById(`status-${route}-${i}`).innerHTML = html;
+}
+
+// ========== ADMIN LOGIN ==========
+function adminLogin() {
+  const name = document.getElementById("mccName").value.trim();
+  const password = document.getElementById("mccPassword").value.trim();
+
+  if (!name || !password) return showToast("Please fill all fields", "error");
+
+  if (!mccAdmins[name] || mccAdmins[name].password !== password) {
+    return showToast("Invalid MCC name or password", "error");
+  }
+
+  // Success
+  document.getElementById("adminLoginSection").style.display = "none";
+  document.querySelector(".admin-section").style.display = "block";
+  updateRouteDropdown(name);
+}
+
+// ========== ROUTE DROPDOWN ==========
+function updateRouteDropdown(mccName) {
+  const dropdown = document.getElementById("routeSelector");
+  dropdown.innerHTML = "";
+
+  const routes = mccAdmins[mccName].routes || [];
+
+  routes.forEach(route => {
+    const option = document.createElement("option");
+    option.value = route;
+    option.innerText = `Route ${route}`;
+    dropdown.appendChild(option);
+  });
+
+  loadSocietiesForEdit(routes[0]);
+}
+
+// ========== SOCIETY LIST FOR ADMIN ==========
+function loadSocietiesForEdit(route) {
+  const container = document.getElementById("societyListAdmin");
+  container.innerHTML = "";
+
+  (routeData[route]?.societies || []).forEach((society, index) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <input type="text" value="${society}" />
+      <button onclick="deleteSociety('${route}', ${index})">🗑</button>
+    `;
+    const input = div.querySelector("input");
+    input.addEventListener("blur", () => {
+      routeData[route].societies[index] = input.value.trim();
+      saveRouteData();
+    });
+    container.appendChild(div);
+  });
+}
+
+// ========== ADD SOCIETY ==========
+function addSociety() {
+  const route = document.getElementById("routeSelector").value;
+  const name = document.getElementById("newSocietyName").value.trim();
+
+  if (!name) return showToast("Enter society name", "error");
+
+  routeData[route].societies.push(name);
+  saveRouteData();
+  document.getElementById("newSocietyName").value = "";
+  loadSocietiesForEdit(route);
+  showToast("Society added", "info");
+}
+
+// ========== DELETE SOCIETY ==========
+function deleteSociety(route, index) {
+  routeData[route].societies.splice(index, 1);
+  saveRouteData();
+  loadSocietiesForEdit(route);
+  showToast("Society deleted", "info");
+}
+
+// ========== ADD ROUTE ==========
 function addRoute() {
+  const route = document.getElementById("newRouteNumber").value.trim();
+  if (!route) return showToast("Enter route number", "error");
+  if (routeData[route]) return showToast("Route already exists", "error");
 
-  const newRouteNumber = document.getElementById("newRouteNumber")?.value?.trim();
+  const password = prompt("Set password for this route:");
+  if (!password) return showToast("Password required", "error");
 
-  if (!newRouteNumber) {
+  routeData[route] = { password, societies: [] };
+  saveRouteData();
+  document.getElementById("newRouteNumber").value = "";
+  showToast("Route added", "info");
+}
 
-    MilkRouteTracker.showToast("Please enter a route number", "error");
+// ========== LANGUAGE SWITCH ==========
+function loadLanguage() {
+  const lang = localStorage.getItem("language") || "en";
+  document.getElementById("languageToggle").value = lang;
+  applyLanguage(lang);
+}
 
-    return;
+function switchLanguage(lang) {
+  localStorage.setItem("language", lang);
+  applyLanguage(lang);
+}
 
-  }
-
-  
-
-  if (MilkRouteTracker.routeData[newRouteNumber]) {
-
-    MilkRouteTracker.showToast("Route already exists", "error");
-
-    return;
-
-  }
-
-  
-
-  MilkRouteTracker.routeData[newRouteNumber] = {
-
-    password: `Milk${newRouteNumber}`,
-
-    societies: []
-
+function applyLanguage(lang) {
+  const text = {
+    en: {
+      driverLogin: "Driver Login",
+      adminLogin: "Admin Login",
+      route: "Route Number",
+      pass: "Password",
+      shift: "Select Shift",
+      login: "Login"
+    },
+    hi: {
+      driverLogin: "ड्राइवर लॉगिन",
+      adminLogin: "प्रशासक लॉगिन",
+      route: "रूट नंबर",
+      pass: "पासवर्ड",
+      shift: "शिफ्ट चुनें",
+      login: "लॉगिन"
+    }
   };
 
-  
-
-  MilkRouteTracker.saveData();
-
-  MilkRouteTracker.populateRouteDropdown();
-
-  MilkRouteTracker.renderAdminRoutes(MilkRouteTracker.currentSession.mccName);
-
-  MilkRouteTracker.showToast(`Route ${newRouteNumber} added successfully`, "info");
-
-  
-
-  document.getElementById("newRouteNumber").value = "";
-
+  const t = text[lang];
+  document.getElementById("driverLoginTitle").innerText = t.driverLogin;
+  document.getElementById("adminLoginTitle").innerText = t.adminLogin;
+  document.getElementById("routeLabel").innerText = t.route;
+  document.getElementById("passwordLabel").innerText = t.pass;
+  document.getElementById("shiftLabel").innerText = t.shift;
+  document.getElementById("driverLoginButton").innerText = t.login;
+  document.getElementById("adminLoginButton").innerText = t.login;
 }
 
-
-
-function loadSocietiesForEdit() {
-
-  const selectedRoute = document.getElementById("routeSelectToEdit")?.value;
-
-  const editArea = document.getElementById("editSocietiesArea");
-
-  
-
-  if (!selectedRoute || !editArea) return;
-
-  
-
-  const societies = MilkRouteTracker.routeData[selectedRoute]?.societies || [];
-
-  editArea.innerHTML = `
-
-    <h4>Societies in Route ${selectedRoute}:</h4>
-
-    <ul>
-
-      ${societies.map(society => `<li>${society}</li>`).join('')}
-
-    </ul>
-
-  `;
-
+// ========== LOGOUT ==========
+function logout() {
+  location.reload();
 }
 
-
-
-function addSociety() {
-
-  const selectedRoute = document.getElementById("routeSelectToEdit")?.value;
-
-  const newSocietyName = document.getElementById("newSocietyName")?.value?.trim();
-
-  
-
-  if (!selectedRoute) {
-
-    MilkRouteTracker.showToast("Please select a route first", "error");
-
-    return;
-
-  }
-
-  
-
-  if (!newSocietyName) {
-
-    MilkRouteTracker.showToast("Please enter society name", "error");
-
-    return;
-
-  }
-
-  
-
-  if (!MilkRouteTracker.routeData[selectedRoute].societies) {
-
-    MilkRouteTracker.routeData[selectedRoute].societies = [];
-
-  }
-
-  
-
-  MilkRouteTracker.routeData[selectedRoute].societies.push(newSocietyName);
-
-  MilkRouteTracker.saveData();
-
-  loadSocietiesForEdit();
-
-  MilkRouteTracker.renderAdminRoutes(MilkRouteTracker.currentSession.mccName);
-
-  MilkRouteTracker.showToast("Society added successfully", "info");
-
-  
-
-  document.getElementById("newSocietyName").value = "";
-
+// ========== TOAST ==========
+function showToast(message, type = "info") {
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.style.background = type === "error" ? "#f44336" : "#4CAF50";
+  toast.className = "toast show";
+  setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
-
-
-// Initialize the application when DOM is loaded
-
-document.addEventListener("DOMContentLoaded", function() {
-
-  console.log("DOM loaded, initializing MilkRouteTracker");
-
+// ========== INIT ==========
+document.addEventListener("DOMContentLoaded", () => {
   MilkRouteTracker.init();
-
-  MilkRouteTracker.setupEventListeners();
-
+  loadLanguage();
 });
-
-
-
-// Fallback initialization
-
-if (document.readyState === "complete" || document.readyState === "interactive") {
-
-  console.log("Document already loaded, initializing immediately");
-
-  MilkRouteTracker.init();
-
-  MilkRouteTracker.setupEventListeners();
-
-}
-
