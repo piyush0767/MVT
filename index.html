@@ -11,159 +11,34 @@
     button { margin: 5px; }
   </style>
 </head>
-<body>
-  <h2 id="title">Milk Van Tracking</h2>
+<body style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto;">
+  <h1 style="text-align: center; font-size: 2em;">🥛 Milk Van Tracking</h1>
 
-  <!-- Language toggle -->
-  <button onclick="toggleLanguage()">🌐 Switch Language</button>
+  <div style="text-align: center; margin-bottom: 20px;">
+    <button id="languageSelect" style="padding: 8px 16px; font-size: 1em; cursor: pointer;">
+      🌐 Switch Language
+    </button>
+  </div>
 
-  <!-- Driver Login Section -->
-  <div id="driverLoginSection">
-    <h3 id="driverLoginTitle">Driver Login</h3>
-    <input id="routeNumber" placeholder="Enter Route Number" /><br/>
-    <input id="password" type="password" placeholder="Enter Password" /><br/>
-    <select id="shiftSelector">
+  <div id="loginSection" style="border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+    <h2 id="loginTitle">Driver Login</h2>
+
+    <input type="text" id="routeNumber" placeholder="Enter Route Number" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+    <input type="password" id="password" placeholder="Enter Password" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+    
+    <select id="shiftSelector" style="width: 100%; padding: 10px; margin-bottom: 10px;">
       <option value="Morning">Morning</option>
       <option value="Evening">Evening</option>
-    </select><br/>
-    <button onclick="driverLogin()">Login</button>
+      <option value="Night">Night</option>
+    </select>
+
+    <button id="driverLoginBtn" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; font-size: 1em;">
+      Login
+    </button>
   </div>
 
-  <!-- Driver Section -->
-  <div class="driver-section hidden">
-    <h3 id="driverHeader">Welcome Driver</h3>
-    <p><strong>Route:</strong> <span id="driverRoute"></span></p>
-    <p><strong id="shiftLabel">Shift:</strong> <span id="shiftDisplay"></span></p>
-    <p><strong>Login Time:</strong> <span id="loginTime"></span></p>
+  <div id="driverPanel" style="display:none; margin-top: 30px;"></div>
+  <div id="adminPanel" style="display:none; margin-top: 30px;"></div>
 
-    <ul id="societyList"></ul>
-  </div>
-
-  <!-- Toast Message Container -->
-  <div id="toast" class="toast hidden"></div>
-
-  <script>
-    // Show toast
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.innerText = msg;
-      toast.classList.remove("hidden");
-      setTimeout(() => toast.classList.add("hidden"), 3000);
-    }
-
-    // Load route data if not in localStorage
-    function initRouteData() {
-      if (!localStorage.getItem("routeData")) {
-        const sampleData = {
-          "1801": {
-            password: "Milk1801",
-            societies: {
-              Morning: ["Shivaji Nagar", "Green Valley", "Sai Residency"],
-              Evening: ["Shivaji Nagar", "Green Valley", "Evening Heights"]
-            }
-          },
-          "1802": {
-            password: "Milk1802",
-            societies: {
-              Morning: ["Lakeview Apartments", "Sunrise Colony"],
-              Evening: ["Sunset Residency", "Twilight Homes"]
-            }
-          }
-        };
-        localStorage.setItem("routeData", JSON.stringify(sampleData));
-        alert("✅ Sample data loaded!\nTry route 1801 & password Milk1801");
-      }
-    }
-
-    // Load saved language
-    function loadLanguage() {
-      const lang = localStorage.getItem("lang") || "en";
-      applyLanguage(lang);
-    }
-
-    function toggleLanguage() {
-      const current = localStorage.getItem("lang") || "en";
-      const next = current === "en" ? "hi" : "en";
-      applyLanguage(next);
-      localStorage.setItem("lang", next);
-    }
-
-    function applyLanguage(lang) {
-      const texts = {
-        en: {
-          title: "Milk Van Tracking",
-          driverLoginTitle: "Driver Login",
-          driverHeader: "Welcome Driver",
-          shiftLabel: "Shift:"
-        },
-        hi: {
-          title: "दूध वाहन ट्रैकिंग",
-          driverLoginTitle: "ड्राइवर लॉगिन",
-          driverHeader: "स्वागत है ड्राइवर",
-          shiftLabel: "शिफ्ट:"
-        }
-      };
-      const t = texts[lang];
-      document.getElementById("title").innerText = t.title;
-      document.getElementById("driverLoginTitle").innerText = t.driverLoginTitle;
-      document.getElementById("driverHeader").innerText = t.driverHeader;
-      document.getElementById("shiftLabel").innerText = t.shiftLabel;
-    }
-
-    function driverLogin() {
-      const route = document.getElementById("routeNumber").value.trim();
-      const password = document.getElementById("password").value;
-      const shift = document.getElementById("shiftSelector").value;
-
-      const routeData = JSON.parse(localStorage.getItem("routeData"));
-
-      if (!routeData[route]) {
-        showToast("❌ Route not found");
-        return;
-      }
-
-      if (routeData[route].password !== password) {
-        showToast("❌ Incorrect password");
-        return;
-      }
-
-      // Show driver section
-      document.querySelector(".driver-section").classList.remove("hidden");
-      document.getElementById("driverRoute").innerText = route;
-      document.getElementById("shiftDisplay").innerText = shift;
-      document.getElementById("loginTime").innerText = new Date().toLocaleTimeString();
-      document.getElementById("driverLoginSection").classList.add("hidden");
-
-      showSocietyList(route, shift);
-    }
-
-    function showSocietyList(route, shift) {
-      const routeData = JSON.parse(localStorage.getItem("routeData"));
-      const societies = routeData[route].societies[shift] || [];
-      const ul = document.getElementById("societyList");
-      ul.innerHTML = "";
-
-      societies.forEach((name, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          ${name}
-          <button onclick="mark('${name}', 'arrival')">Arrival</button>
-          <button onclick="mark('${name}', 'dispatch')">Dispatch</button>
-        `;
-        ul.appendChild(li);
-      });
-    }
-
-    function mark(society, action) {
-      showToast(`✔️ ${society} marked as ${action}`);
-    }
-
-    // On load
-    document.addEventListener("DOMContentLoaded", () => {
-      initRouteData();
-      loadLanguage();
-    });
-  </script>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
-</html>
