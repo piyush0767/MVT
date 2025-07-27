@@ -77,6 +77,7 @@ function adminLogin() {
     document.querySelector(".admin-section").classList.remove("hidden");
 
     populateRouteSelector();
+    populateSummaryRouteFilter();
   } else {
     showToast("Invalid admin credentials", true);
   }
@@ -335,6 +336,83 @@ function applyAdminFilters() {
   } else {
     tableDiv.innerHTML = html;
   }
+}
+// ✅ DAILY VISIT SUMMARY FUNCTIONS
+
+function populateSummaryRouteFilter() {
+  const routeDropdown = document.getElementById("summaryRouteFilter");
+  routeDropdown.innerHTML = `<option value="">All Routes</option>`;
+
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  Object.keys(routeData).forEach(route => {
+    const opt = document.createElement("option");
+    opt.value = route;
+    opt.textContent = route;
+    routeDropdown.appendChild(opt);
+  });
+}
+
+function loadAdminSummary() {
+  const selectedDate = document.getElementById("summaryDateFilter").value;
+  const selectedRoute = document.getElementById("summaryRouteFilter").value;
+
+  const logs = JSON.parse(localStorage.getItem("driverLogs") || "[]");
+  const summaryTable = document.querySelector("#summaryTable tbody");
+  summaryTable.innerHTML = "";
+
+  const filtered = logs.filter(log =>
+    (!selectedDate || log.date === selectedDate) &&
+    (!selectedRoute || log.route === selectedRoute)
+  );
+
+  filtered.forEach(entry => {
+    const tr = document.createElement("tr");
+
+    const arrival = entry.arrival || "-";
+    const departure = entry.departure || "-";
+    let duration = "-";
+
+    if (entry.arrival && entry.departure) {
+      const start = new Date(`1970-01-01T${entry.arrival}`);
+      const end = new Date(`1970-01-01T${entry.departure}`);
+      const diff = (end - start) / 60000; // minutes
+
+      if (!isNaN(diff) && diff >= 0) {
+        const hrs = Math.floor(diff / 60);
+        const mins = Math.floor(diff % 60);
+        duration = `${hrs}h ${mins}m`;
+      }
+    }
+
+    tr.innerHTML = `
+      <td>${entry.society}</td>
+      <td>${arrival}</td>
+      <td>${departure}</td>
+      <td>${duration}</td>
+    `;
+
+    summaryTable.appendChild(tr);
+  });
+}
+
+function exportCSV() {
+  const rows = [["Society", "Arrival Time", "Departure Time", "Duration"]];
+  const trs = document.querySelectorAll("#summaryTable tbody tr");
+
+  trs.forEach(tr => {
+    const cells = tr.querySelectorAll("td");
+    const row = Array.from(cells).map(td => td.textContent.trim());
+    rows.push(row);
+  });
+
+  const csvContent = rows.map(e => e.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "visit_summary.csv";
+  a.click();
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
