@@ -144,21 +144,41 @@ function toggleLanguage() {
 }
 function bulkAddRoute() {
   const routeNumber = document.getElementById("bulkRouteNumber").value.trim();
-  const societiesText = document.getElementById("bulkSocieties").value.trim();
+  const rawText = document.getElementById("bulkSocieties").value.trim();
 
-  if (!routeNumber || !societiesText) {
+  if (!routeNumber || !rawText) {
     showToast("Please enter both route number and societies.", true);
     return;
   }
 
-  const societies = societiesText.includes(",")
-    ? societiesText.split(",").map(s => s.trim()).filter(Boolean)
-    : societiesText.split("\n").map(s => s.trim()).filter(Boolean);
+  // Handle: comma, newline, tab (Excel columns), mixed delimiters
+  let societies = rawText
+    .split(/[\n,\t]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
 
   if (societies.length === 0) {
     showToast("No valid societies provided.", true);
     return;
   }
+
+  // Load existing data
+  let data = JSON.parse(localStorage.getItem("routeData")) || {};
+
+  data[routeNumber] = {
+    password: `Milk${routeNumber}`,
+    societies: societies
+  };
+
+  localStorage.setItem("routeData", JSON.stringify(data));
+  showToast(`✅ Route ${routeNumber} added with ${societies.length} societies.`, false);
+
+  populateRouteSelector();
+
+  // Clear inputs
+  document.getElementById("bulkRouteNumber").value = "";
+  document.getElementById("bulkSocieties").value = "";
+}
 
   // Load existing data
   let data = JSON.parse(localStorage.getItem("routeData")) || {};
