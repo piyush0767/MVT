@@ -560,43 +560,101 @@ function showAdminTab(tabName) {
 }
 function renderRouteManagementUI() {
   const container = document.getElementById("routeManagementArea");
-  container.innerHTML = ''; // Clear "Loading..."
+  container.innerHTML = ""; // Clear old content
 
   const heading = document.createElement("h3");
-  heading.textContent = "Select Route to Edit Societies";
+  heading.textContent = "Edit Route & Societies";
   container.appendChild(heading);
 
-  const dropdown = document.createElement("select");
-  dropdown.id = "routeSelectDropdown";
-  container.appendChild(dropdown);
+  const routeSelect = document.createElement("select");
+  routeSelect.id = "routeSelectDropdown";
+  container.appendChild(routeSelect);
 
-  // Load routes from localStorage
   const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
 
-  // Add route options
+  // Fill dropdown
   Object.keys(routeData).forEach(route => {
     const option = document.createElement("option");
     option.value = route;
     option.textContent = route;
-    dropdown.appendChild(option);
+    routeSelect.appendChild(option);
   });
 
-  // Add message if no routes
-  if (Object.keys(routeData).length === 0) {
-    const msg = document.createElement("p");
-    msg.textContent = "No routes found. Add routes in Settings.";
-    container.appendChild(msg);
-  }
-
-  // Add a button to edit selected route
   const editBtn = document.createElement("button");
   editBtn.textContent = "Edit Societies";
   editBtn.onclick = () => {
-    const selectedRoute = dropdown.value;
-    alert("Route selected: " + selectedRoute);
-    // (You can replace this alert with society editing logic later)
+    const selectedRoute = routeSelect.value;
+    if (selectedRoute) {
+      showSocietyEditor(selectedRoute);
+    }
   };
   container.appendChild(editBtn);
+
+  // Create society editor div
+  const editorDiv = document.createElement("div");
+  editorDiv.id = "societyEditor";
+  container.appendChild(editorDiv);
+}
+function showSocietyEditor(route) {
+  const routeData = JSON.parse(localStorage.getItem("routeData") || "{}");
+  const societies = routeData[route]?.societies || [];
+
+  const editor = document.getElementById("societyEditor");
+  editor.innerHTML = ""; // Clear previous list
+
+  const list = document.createElement("ul");
+
+  societies.forEach((soc, index) => {
+    const li = document.createElement("li");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = soc;
+    input.dataset.index = index;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "❌";
+    deleteBtn.onclick = () => {
+      societies.splice(index, 1);
+      routeData[route].societies = societies;
+      localStorage.setItem("routeData", JSON.stringify(routeData));
+      showSocietyEditor(route); // refresh
+    };
+
+    li.appendChild(input);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
+
+  editor.appendChild(list);
+
+  const addInput = document.createElement("input");
+  addInput.placeholder = "Add new society";
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "➕ Add";
+  addBtn.onclick = () => {
+    if (addInput.value.trim()) {
+      societies.push(addInput.value.trim());
+      routeData[route].societies = societies;
+      localStorage.setItem("routeData", JSON.stringify(routeData));
+      showSocietyEditor(route);
+    }
+  };
+
+  editor.appendChild(addInput);
+  editor.appendChild(addBtn);
+
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "💾 Save All";
+  saveBtn.onclick = () => {
+    // Collect all edited values
+    const newList = Array.from(editor.querySelectorAll("ul input")).map(i => i.value.trim()).filter(Boolean);
+    routeData[route].societies = newList;
+    localStorage.setItem("routeData", JSON.stringify(routeData));
+    showToast("✅ Societies updated!");
+  };
+
+  editor.appendChild(saveBtn);
 }
 // ========== TOAST ==========
 function showToast(msg, isError = false) {
