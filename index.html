@@ -94,6 +94,33 @@
   <div class="card danger">
     <button onclick="resetApp()">🧨 Reset App</button>
   </div>
+  <!-- ➕ New Admin Summary Section -->
+<div class="card">
+  <h3>📊 Daily Visit Summary</h3>
+
+  <div class="admin-filters">
+    <label>Date:</label>
+    <input type="date" id="summaryDateFilter">
+
+    <label>Route:</label>
+    <select id="summaryRouteFilter"></select>
+
+    <button onclick="loadAdminSummary()">🔍 View</button>
+    <button onclick="exportCSV()">📤 Export CSV</button>
+  </div>
+
+  <table id="summaryTable">
+    <thead>
+      <tr>
+        <th>Society</th>
+        <th>Arrival Time</th>
+        <th>Departure Time</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 </div>
 
   <!-- 🔔 Toast Notification -->
